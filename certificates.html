@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الشهادات والدورات التدريبية</title>
+<style>
+:root{--bg:#070707;--card:#0d0d0d;--gold:#e2bd48;--text:#f1ede4;--muted:#b9af9c;--line:#292316}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Tahoma,sans-serif}
+a{color:var(--gold);text-decoration:none;font-weight:800} .shell{max-width:1250px;margin:auto;padding:0 22px}
+header{padding:18px 0;border-bottom:1px solid #1a1a1a}header .shell{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
+.hero{padding:32px 0 18px} .eyebrow{color:var(--gold);letter-spacing:.14em;text-transform:uppercase} h1{font-size:clamp(28px,3.2vw,46px);margin:10px 0 12px;line-height:1.08}
+p{color:var(--muted);font-size:15px;line-height:1.7;max-width:900px} .filters{display:flex;flex-wrap:wrap;gap:10px;padding:10px 0 28px}
+.filter{border:1px solid #42361f;background:#0f0f10;color:#dfd1b2;padding:11px 16px;border-radius:999px;cursor:pointer;font-weight:700}
+.filter.active{background:rgba(226,189,72,.16);color:#f0dfad;border-color:#977b32}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding-bottom:40px} .card{background:var(--card);border:1px solid #2a2212;border-radius:18px;overflow:hidden}
+.thumb{background:#101010;padding:14px} .thumb img{width:100%;height:250px;object-fit:contain;background:#101010;border-radius:10px}
+.meta{padding:14px 16px 18px} .tag{display:inline-block;border:1px solid #56431d;color:#deb955;border-radius:999px;padding:6px 10px;font-size:12px;margin-bottom:10px}
+.meta h3{font-size:18px;margin:0 0 6px} .meta p{font-size:14px;margin:0 0 10px;color:#c4b797} .meta a{font-size:14px}
+@media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.grid{grid-template-columns:1fr} h1{font-size:34px}}
+
+.open-cert{border:0;background:none;color:var(--gold);font:inherit;font-weight:800;cursor:pointer;padding:0}
+.inside-viewer-note{color:#c9b56b;font-weight:800}
+.cert-lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;padding:24px;z-index:99}.cert-lightbox.open{display:flex}.cert-lightbox-inner{width:min(1100px,96vw);height:min(88vh,900px);background:#0b0b0b;border:1px solid #5b491d;border-radius:16px;padding:14px;position:relative;display:flex;align-items:center;justify-content:center}.cert-lightbox img{max-width:100%;max-height:100%;object-fit:contain}.cert-close{position:absolute;top:12px;inset-inline-end:12px;width:46px;height:46px;border-radius:50%;border:1px solid #d7b342;background:#15120b;color:#fff;font-size:30px;cursor:pointer;z-index:2}
+html{scrollbar-width:thin;scrollbar-color:#d8b43b #080909}*::-webkit-scrollbar{width:12px;height:12px}*::-webkit-scrollbar-track{background:#080909;border-inline-start:1px solid #2e2613}*::-webkit-scrollbar-thumb{border:2px solid #080909;border-radius:999px;background-color:#c9a233;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='%23090a0a'/%3E%3Ctext x='10' y='14' font-size='11' text-anchor='middle'%3E%F0%9F%90%A7%3C/text%3E%3C/svg%3E"),linear-gradient(180deg,#f2d267,#b68e26);background-repeat:no-repeat,no-repeat;background-position:center,center;background-size:18px 18px,100% 100%}/* beta30-scroll-hide */html,body,[data-scroll-root]{scrollbar-width:none!important;-ms-overflow-style:none!important}html::-webkit-scrollbar,body::-webkit-scrollbar,[data-scroll-root]::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}</style>
+<style>
+/* Beta 24: same clean close mark used by every portfolio popup. */
+.cert-close{width:46px!important;height:46px!important;border:1px solid rgba(225,188,67,.46)!important;border-radius:14px!important;background:linear-gradient(145deg,rgba(17,18,17,.98),rgba(7,8,8,.98))!important;box-shadow:0 8px 24px rgba(0,0,0,.38)!important;color:transparent!important;font-size:0!important;overflow:hidden!important;position:absolute!important;top:12px!important;inset-inline-end:12px!important}
+.cert-close:before,.cert-close:after{content:"";position:absolute;left:50%;top:50%;width:24px;height:2.4px;border-radius:999px;background:#f4f4ef;transform-origin:center}
+.cert-close:before{transform:translate(-50%,-50%) rotate(45deg)}.cert-close:after{transform:translate(-50%,-50%) rotate(-45deg)}
+.cert-close:hover{background:rgba(225,188,67,.09)!important;outline:1px solid rgba(225,188,67,.42)!important}.cert-close:hover:before,.cert-close:hover:after{background:#f0c94b}
+
+/* AI for Cybersecurity: expanded program details, using the existing dark/gold portfolio language. */
+.ai-program-modal{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.9);display:none;padding:18px;overflow:auto}
+.ai-program-modal.open{display:block}
+.ai-program-panel{position:relative;width:min(1180px,96vw);margin:0 auto;background:#080909;border:1px solid #5b491d;border-radius:16px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.5)}
+.ai-program-head{padding-inline-end:64px;border-bottom:1px solid #211d13;padding-bottom:16px;margin-bottom:18px}
+.ai-program-head .eyebrow{font-size:12px;font-weight:800;color:var(--gold)}
+.ai-program-head h2{font-size:clamp(24px,3vw,38px);line-height:1.15;margin:8px 0;color:var(--text)}
+.ai-program-supervisor{color:#c8b98f;font-size:14px;line-height:1.7}
+.ai-day-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.ai-day{border:1px solid #2b2519;background:#0d0d0d;border-radius:13px;padding:15px}
+.ai-day strong{display:block;color:var(--gold);font-size:15px;margin-bottom:7px}.ai-day p{font-size:13px;margin:0;color:#c9bea9;line-height:1.7}
+.ai-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.ai-gallery figure{margin:0;border:1px solid #292316;border-radius:12px;padding:8px;background:#0d0d0d}.ai-gallery img{display:block;width:100%;height:240px;object-fit:contain;background:#070707;border-radius:8px}.ai-gallery figcaption{font-size:12px;line-height:1.55;color:#a99f8b;padding-top:7px}
+.ai-post-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.ai-post-links a{display:inline-flex;align-items:center;justify-content:center;border:1px solid #5b491d;background:#11100c;color:#e3c65f;border-radius:9px;padding:10px 13px;font-size:13px;font-weight:800}
+.ai-post-links a:hover{background:#19160d;border-color:#d8b43b;color:#ffe28a}
+.ai-program-close{top:16px!important;inset-inline-end:16px!important}
+@media(max-width:850px){.ai-day-grid,.ai-gallery{grid-template-columns:1fr}.ai-gallery img{height:auto;max-height:360px}.ai-program-panel{padding:16px}.ai-program-modal{padding:8px}}
+</style>
+</head><body data-scroll-root>
+<header><div class="shell"><span class="inside-viewer-note" id="insideNote">ضمن البورتفوليو</span><strong id="counter"></strong></div></header>
+<section class="hero"><div class="shell"><div class="eyebrow" id="heroEyebrow">CERTIFICATES & TRAINING</div><h1 id="heroTitle">الشهادات والدورات التدريبية</h1>
+<p id="heroDesc">فهرسة مبسطة للشهادات وورش العمل ضمن البورتفوليو. يمكنك عرض الكل أو تصفية الشهادات حسب النوع مثل الأمن السيبراني أو التطوير أو الورش.</p></div></section>
+<main class="shell">
+  <div class="filters" id="filters">
+    <button class="filter active" data-cat="all" id="filterAll">الكل</button>
+    <button class="filter" data-cat="cyber" id="filterCyber">الأمن السيبراني</button>
+    <button class="filter" data-cat="dev" id="filterDev">التطوير والويب</button>
+    <button class="filter" data-cat="learning" id="filterLearning">تعلم ودورات عامة</button>
+    <button class="filter" data-cat="workshop" id="filterWorkshop">ورش وتدريب</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+<div class="cert-lightbox" id="certLightbox"><div class="cert-lightbox-inner"><button class="cert-close" id="certClose" type="button">×</button><img id="certPreview" alt=""></div></div>
+<div class="ai-program-modal" id="aiProgramModal" aria-hidden="true"><div class="ai-program-panel"><button class="cert-close ai-program-close" id="aiProgramClose" type="button">×</button><div id="aiProgramContent"></div></div></div>
+<script>
+const certs = [
+  {file:'18-ai-cybersecurity.jpg',cat:'workshop',title:{ar:'الذكاء الاصطناعي للأمن السيبراني',en:'AI for Cybersecurity'},special:'ai-program',date:'2026-08-16'},
+  {file:'17.jpg',cat:'cyber',title:{ar:'دورة التحضير لـ eJPT',en:'EJPT PREP COURSE'},date:'2025-11-20'},
+  {file:'01.jpg',cat:'workshop',title:{ar:'مدقق رئيسي ISO/IEC 27001:2022',en:'ISO/IEC 27001:2022 Lead Auditor'},date:'2025-06-15'},
+  {file:'16.jpg',cat:'cyber',title:{ar:'مقدمة في الأمن السيبراني',en:'Introduction to Cybersecurity'},date:'2025-06-15'},
+  {file:'11.jpg',cat:'cyber',title:{ar:'مسار مهني في الأمن السيبراني',en:'Career path in Cyber Security'},date:'2024-08-27'},
+  {file:'12.jpg',cat:'cyber',title:{ar:'حماية الأنظمة من الاختراقات',en:'Protect Systems from Penetrations'},date:'2024-08-27'},
+  {file:'13.jpg',cat:'cyber',title:{ar:'تقنيات هجمات الأمن السيبراني',en:'Cyber Security Attack Techniques'},date:'2024-08-27'},
+  {file:'14.jpg',cat:'cyber',title:{ar:'أساسيات الأمن السيبراني',en:'Cyber Security Basics'},date:'2024-08-27'},
+  {file:'15.jpg',cat:'cyber',title:{ar:'مقدمة في الأمن السيبراني',en:'Introduction to Cyber Security'},date:'2024-08-27'},
+  {file:'06.jpg',cat:'learning',title:{ar:'تعلم الآلة',en:'Machine Learning'},date:'2024-07-18'},
+  {file:'07.jpg',cat:'learning',title:{ar:'الحوسبة السحابية',en:'Cloud Computing'},date:'2024-07-18'},
+  {file:'02.jpg',cat:'dev',title:{ar:'تطوير تطبيقات الويب',en:'Web Application Development'},date:'2023-11-22'},
+  {file:'03.jpg',cat:'learning',title:{ar:'التحول الرقمي',en:'Digital Transformation'},date:'2023-11-22'},
+  {file:'04.jpg',cat:'learning',title:{ar:'إنترنت الأشياء وتطبيقاتها',en:'Internet of Things Applications'},date:'2023-11-21'},
+  {file:'05.jpg',cat:'learning',title:{ar:'إدارة المخاطر',en:'Risk management'},date:'2023-11-21'},
+  {file:'08.jpg',cat:'learning',title:{ar:'تعرف على أساسيات الحاسب الآلي',en:'Introduction in the Information Technology'},date:'2023-06-06'},
+  {file:'09.jpg',cat:'cyber',title:{ar:'الأمن السيبراني',en:'Cybersecurity'},date:'2023-05-15'},
+  {file:'10.jpg',cat:'cyber',title:{ar:'أمن المعلومات',en:'Cyber Security'},date:'2023-01-31'}
+];
+const requestedLang=new URLSearchParams(location.search).get('lang');
+let siteLang=requestedLang==='en'?'en':requestedLang==='ar'?'ar':'ar';
+if(requestedLang!=='en'&&requestedLang!=='ar'){try{siteLang=parent.document.documentElement.lang==='en'?'en':'ar'}catch(_){ }}
+document.documentElement.lang=siteLang;document.documentElement.dir=siteLang==='ar'?'rtl':'ltr';document.title=siteLang==='ar'?'الشهادات والدورات التدريبية':'Certificates & Training';
+const L={
+ ar:{inside:'ضمن البورتفوليو',eyebrow:'الشهادات والتدريب',title:'الشهادات والدورات التدريبية',desc:'فهرسة مبسطة للشهادات وورش العمل ضمن البورتفوليو. يمكنك عرض الكل أو تصفية الشهادات حسب النوع مثل الأمن السيبراني أو التطوير أو الورش.',all:'الكل',cyber:'الأمن السيبراني',dev:'التطوير والويب',learning:'تعلم ودورات عامة',workshop:'ورش وتدريب',view:'استعراض الشهادة ↗',details:'عرض تفاصيل البرنامج ↗',count:n=>`${n} شهادة / دورة / ورشة`},
+ en:{inside:'Inside portfolio',eyebrow:'CERTIFICATES & TRAINING',title:'Certificates & Training',desc:'A clean index of certificates, courses, and workshops in the portfolio. View all items or filter by cybersecurity, development, general learning, or workshops.',all:'All',cyber:'Cybersecurity',dev:'Development & Web',learning:'General Learning & Courses',workshop:'Workshops & Training',view:'View certificate ↗',details:'View program details ↗',count:n=>`${n} certificates / courses / workshops`}
+};
+const labels={cyber:L[siteLang].cyber,dev:L[siteLang].dev,learning:L[siteLang].learning,workshop:L[siteLang].workshop};
+Object.entries({insideNote:L[siteLang].inside,heroEyebrow:L[siteLang].eyebrow,heroTitle:L[siteLang].title,heroDesc:L[siteLang].desc,filterAll:L[siteLang].all,filterCyber:L[siteLang].cyber,filterDev:L[siteLang].dev,filterLearning:L[siteLang].learning,filterWorkshop:L[siteLang].workshop}).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v});
+const grid = document.getElementById('grid');
+const counter = document.getElementById('counter');
+const certTitle=c=>typeof c.title==='string'?c.title:c.title[siteLang];
+function render(cat='all'){
+  const items = cat==='all' ? certs : certs.filter(c=>c.cat===cat);
+  counter.textContent = L[siteLang].count(items.length);
+  grid.innerHTML = items.map(c=>`<article class="card">
+    <div class="thumb"><img src="assets/certificates/${c.file}" alt=""></div>
+    <div class="meta">
+      <span class="tag">${labels[c.cat]}</span>
+      <h3>${certTitle(c)}</h3>
+      <p>${labels[c.cat]}</p>
+      ${c.special==='ai-program'
+        ? `<button class="open-cert" type="button" data-src="assets/certificates/${c.file}" data-title="${certTitle(c)}">${L[siteLang].view}</button>&nbsp;&nbsp;<button class="open-cert" type="button" data-title="${certTitle(c)}" data-special="ai-program">${L[siteLang].details}</button>`
+        : `<button class="open-cert" type="button" data-src="assets/certificates/${c.file}" data-title="${certTitle(c)}">${L[siteLang].view}</button>`}
+    </div>
+  </article>`).join('');
+}
+render();
+document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active'); render(btn.dataset.cat);
+}));
+const lb=document.getElementById('certLightbox'),pv=document.getElementById('certPreview');
+const aiModal=document.getElementById('aiProgramModal'),aiContent=document.getElementById('aiProgramContent');
+const AI_POSTS={
+ day1:'https://www.linkedin.com/posts/abdullah-nasser-al-msan-_%D8%A7%D9%84%D9%8A%D9%88%D9%85-%D8%A7%D9%84%D8%A3%D9%88%D9%84-%D9%85%D9%86-%D9%A3-%D8%A3%D9%8A%D8%A7%D9%85-%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8%D9%8A%D8%A9-%D9%85%D8%B9-%D9%85%D8%A8%D8%A7%D8%AF%D8%B1%D8%A9-capsule-activity-7494792804804628480-FoD5',
+ day2:'https://www.linkedin.com/posts/abdullah-nasser-al-msan-_%D8%A7%D9%84%D9%8A%D9%88%D9%85-%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A-%D9%85%D9%86-%D9%A3-%D8%A3%D9%8A%D8%A7%D9%85-%D8%AA%D8%AF%D8%B1%D9%8A%D8%A8%D9%8A%D8%A9-%D9%85%D8%B9-capsule-activity-7495210588130873344-UV60',
+ day3:'https://lnkd.in/p/ds_EbC5z'
+};
+function renderAiProgram(){
+ const ar=siteLang==='ar';
+ aiContent.innerHTML=ar?`<div class="ai-program-head"><div class="eyebrow">برنامج تدريبي · الأمن السيبراني والذكاء الاصطناعي</div><h2>برنامج تدريبي: تطبيقات الذكاء الاصطناعي في الأمن السيبراني (3 أيام)</h2><div class="ai-program-supervisor">بإشراف: <strong>Sukinah Alhumaidi</strong> — بمبادرة <strong>Capsule Tahawul Initiative</strong></div></div><div class="ai-day-grid"><div class="ai-day"><strong>اليوم 1 — تنبيه SOC</strong><p>محاكاة لتنبيه دخول مشبوه مرتبط بالموظفة “Sara”. بدأ التمرين بتحليل يدوي للأدلة ثم مقارنة الاستنتاج بتحليل مدعوم بالذكاء الاصطناعي.</p></div><div class="ai-day"><strong>اليوم 2 — التحقق والأولوية</strong><p>تحقق من مخرجات AI جملة بجملة، سياسات حماية البيانات، هندسة برومبت أمني، وتمرين لترتيب أولوية الثغرات بناءً على السياق والأثر.</p></div><div class="ai-day"><strong>اليوم 3 — سطح هجوم AI</strong><p>AI Attack Surface Challenge ركز على تحليل النظام الكامل حول النموذج، وفهم أن المخاطر قد تأتي من الأدوات والبيانات والتكاملات وليس من النموذج وحده.</p></div></div><div class="ai-gallery"><figure><img src="assets/certificates/ai-training/day1-alert-triage.png" alt=""><figcaption>اليوم 1 — تدوين مؤشرات الاشتباه، التفسيرات المحتملة، الأدلة الناقصة وخطوات التحقق.</figcaption></figure><figure><img src="assets/certificates/ai-training/day2-prioritization.png" alt=""><figcaption>اليوم 2 — تقييم يدوي لأولوية الثغرات قبل مقارنة القرار بمساعدة AI.</figcaption></figure><figure><img src="assets/certificates/ai-training/day3-attack-surface.png" alt=""><figcaption>اليوم 3 — تمرين تحليل سطح هجوم نظام AI كامل ضمن بيئة تدريبية تفاعلية.</figcaption></figure></div><div class="ai-post-links"><a href="${AI_POSTS.day1}" target="_blank" rel="noopener">اليوم 1 — عرض المنشور الأصلي ↗</a><a href="${AI_POSTS.day2}" target="_blank" rel="noopener">اليوم 2 — عرض المنشور الأصلي ↗</a><a href="${AI_POSTS.day3}" target="_blank" rel="noopener">اليوم 3 — عرض المنشور الأصلي ↗</a></div>`:`<div class="ai-program-head"><div class="eyebrow">TRAINING PROGRAM · CYBERSECURITY & AI</div><h2>AI Applications in Cybersecurity — 3-Day Training Program</h2><div class="ai-program-supervisor">Supervised by <strong>Sukinah Alhumaidi</strong> — an initiative by <strong>Capsule Tahawul Initiative</strong></div></div><div class="ai-day-grid"><div class="ai-day"><strong>Day 1 — SOC Alert Triage</strong><p>A simulated suspicious sign-in alert involving an employee named “Sara”. The exercise began with manual evidence analysis, then compared the reasoning with AI-assisted analysis.</p></div><div class="ai-day"><strong>Day 2 — Validation & Prioritization</strong><p>Statement-by-statement validation of AI output, data-protection policies, security prompt engineering, and a vulnerability-prioritization exercise driven by context and business impact.</p></div><div class="ai-day"><strong>Day 3 — AI Attack Surface</strong><p>An AI Attack Surface Challenge focused on analyzing the full system around the model and recognizing that tools, data, integrations, and workflows can create security exposure.</p></div></div><div class="ai-gallery"><figure><img src="assets/certificates/ai-training/day1-alert-triage.png" alt=""><figcaption>Day 1 — documenting suspicious indicators, plausible explanations, missing evidence, and validation steps.</figcaption></figure><figure><img src="assets/certificates/ai-training/day2-prioritization.png" alt=""><figcaption>Day 2 — a manual vulnerability-prioritization decision before comparison with AI assistance.</figcaption></figure><figure><img src="assets/certificates/ai-training/day3-attack-surface.png" alt=""><figcaption>Day 3 — interactive whole-system AI attack-surface analysis.</figcaption></figure></div><div class="ai-post-links"><a href="${AI_POSTS.day1}" target="_blank" rel="noopener">Day 1 — View original post ↗</a><a href="${AI_POSTS.day2}" target="_blank" rel="noopener">Day 2 — View original post ↗</a><a href="${AI_POSTS.day3}" target="_blank" rel="noopener">Day 3 — View original post ↗</a></div>`;
+}
+document.addEventListener('click',e=>{const b=e.target.closest('.open-cert');if(!b)return;if(b.dataset.special==='ai-program'){renderAiProgram();aiModal.classList.add('open');aiModal.setAttribute('aria-hidden','false');aiModal.scrollTop=0;return;}pv.src=b.dataset.src;lb.classList.add('open');});
+document.getElementById('certClose').onclick=()=>{lb.classList.remove('open');pv.src='';};
+document.getElementById('aiProgramClose').onclick=()=>{aiModal.classList.remove('open');aiModal.setAttribute('aria-hidden','true');};
+aiModal.onclick=e=>{if(e.target===aiModal){aiModal.classList.remove('open');aiModal.setAttribute('aria-hidden','true');}};
+lb.onclick=e=>{if(e.target===lb){lb.classList.remove('open');pv.src='';}};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){lb.classList.remove('open');pv.src='';aiModal.classList.remove('open');aiModal.setAttribute('aria-hidden','true');}});
+
+(function(){
+  let currentZoom=1; const min=.55,max=1.5;
+  function clamp(v){return Math.max(min,Math.min(max,Number(v)||1));}
+  function setZoom(v){ currentZoom=clamp(v); document.documentElement.style.setProperty('zoom',String(currentZoom),'important'); document.body.style.zoom=''; return currentZoom; }
+  window.portfolioViewerSetZoom=setZoom;
+  window.portfolioViewerGetZoom=()=>currentZoom;
+})();
+</script></body></html>

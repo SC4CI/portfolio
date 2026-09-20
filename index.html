@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070707">
+  <title>Abdullah AlMsan — Portfolio</title>
+  <meta name="description" content="Portfolio of Abdullah Nasser AlMsan — IT, networking, cybersecurity learning, technical projects and documentation.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell nav-row">
+      <a class="brand" href="#home" aria-label="Home"><span>A</span><i></i><span>N</span></a>
+      <nav id="mainNav" class="main-nav"></nav>
+      <div class="nav-actions">
+        <button class="nav-menu-btn" id="navMenuBtn" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mainNav"><span></span><span></span><span></span></button>
+        <button class="lang-btn" id="langBtn" type="button">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-image"></div>
+      <div class="shell hero-grid">
+        <div class="hero-copy">
+          <div class="topline">IT Support <span>•</span> Networking <span>•</span> Cybersecurity</div>
+          <div class="person-name" id="personName"></div>
+          <h1 id="heroTitle"></h1>
+          <p class="hero-summary" id="heroSummary"></p>
+
+          <div class="quick-contact" id="quickContact"></div>
+
+          <a href="#projects" class="discover-link" id="discoverLink"></a>
+        </div>
+
+        <aside class="hero-side">
+          <div class="quote-mark">”</div>
+          <p id="heroQuote"></p>
+          <div class="mini-rule"></div>
+          <div class="repeat-list">
+            <span>Learn</span><span>Build</span><span>Explore</span><span>Improve</span><span>Repeat</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="projects">
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">FEATURED PROJECTS</div>
+            <h2 id="projectsTitle"></h2>
+            <p id="projectsIntro"></p>
+          </div>
+        </div>
+        <div class="project-grid" id="projectGrid"></div>
+      </div>
+    </section>
+
+    <section class="section resources-section" id="resources">
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">LEARNING & DOCUMENTATION</div>
+            <h2 id="resourcesTitle">المواد والتوثيق</h2>
+            <p id="resourcesIntro">أدلة وملفات مرجعية بنيتها لتنظيم ما أتعلمه والرجوع إليه بشكل أسرع.</p>
+          </div>
+        </div>
+        <div class="resource-grid" id="resourceGrid"></div>
+      </div>
+    </section>
+
+    <section class="section" id="experience">
+      <div class="shell three-col">
+        <article class="section-card">
+          <div class="eyebrow">EXPERIENCE</div>
+          <h2 id="experienceTitle"></h2>
+          <div id="experienceList" class="stack"></div>
+        </article>
+
+        <article class="section-card" id="education">
+          <div class="eyebrow">EDUCATION</div>
+          <h2 id="educationTitle"></h2>
+          <div id="educationList" class="stack"></div>
+        </article>
+
+        <article class="section-card">
+          <div class="eyebrow">CERTIFICATES</div>
+          <h2 id="certTitle"></h2>
+          <div class="certificate-strip" id="certificateStrip"></div>
+          <button class="gold-button full" type="button" id="certButton"></button>
+        </article>
+      </div>
+    </section>
+
+    <section class="section slim" id="skills">
+      <div class="shell skills-layout">
+        <div>
+          <div class="eyebrow">TOOLS & PRACTICE</div>
+          <h2 id="skillsTitle"></h2>
+        </div>
+        <div id="skillsGrid" class="skills-grid"></div>
+      </div>
+    </section>
+
+    <section class="section contact-section" id="contact">
+      <div class="shell contact-layout">
+        <div>
+          <div class="eyebrow">CONTACT</div>
+          <h2 id="contactTitle"></h2>
+          <p id="contactIntro"></p>
+        </div>
+        <div id="contactActions" class="contact-actions"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-row">
+      <div>
+        <div class="footer-label" id="footerCareer"></div>
+        <p id="footerCareerText"></p>
+      </div>
+      <div class="footer-location">
+        <span id="footerLocationLabel"></span>
+        <strong id="footerLocation"></strong>
+      </div>
+      <div class="footer-direct" id="footerDirect"></div>
+      <blockquote id="footerQuote"></blockquote>
+    </div>
+    <div class="shell copyright">© 2026 Abdullah AlMsan. All rights reserved.</div>
+  </footer>
+
+  <div class="modal" id="projectModal" aria-hidden="true">
+    <div class="modal-panel">
+      <button id="closeModal" class="close-modal v35-close" aria-label="Close"><span class="v35-close-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M7.25 7.25 16.75 16.75M16.75 7.25 7.25 16.75"></path></svg></span></button>
+      <div id="modalHead"></div>
+      <div id="modalGallery" class="modal-gallery"></div>
+      <div id="modalDetails" class="modal-details"></div>
+      <div id="modalLinks" class="modal-links"></div>
+    </div>
+  </div>
+
+  <div class="modal doc-modal" id="docModal" aria-hidden="true">
+    <div class="modal-panel doc-panel">
+      <div class="doc-viewer-head">
+        <strong id="docViewerTitle"></strong>
+        <div class="doc-zoom-tools" id="docZoomTools" hidden>
+          <button id="docZoomOut" type="button" aria-label="Zoom out">−</button>
+          <button id="docZoomReset" type="button" aria-label="Reset zoom"><span id="docZoomLabel">100%</span></button>
+          <button id="docZoomIn" type="button" aria-label="Zoom in">+</button>
+        </div>
+        <button id="closeDocModal" class="close-modal doc-close v35-close" type="button" aria-label="Close"><span class="v35-close-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M7.25 7.25 16.75 16.75M16.75 7.25 7.25 16.75"></path></svg></span></button>
+      </div>
+      <iframe id="docViewerFrame" title="Document viewer"></iframe>
+    </div>
+  </div>
+
+
+  <script src="app.js"></script>
+  <script src="enhancements.js"></script>
+</body>
+</html>
