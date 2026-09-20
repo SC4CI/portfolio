@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Pivoting Cheat Sheet</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">GENERAL — PIVOTING / TUNNELING</span>
+<h1>Pivoting — من اكتشاف الشبكة الثانية إلى إثبات الوصول</h1>
+<p>مرجع عملي: Internal Network → Route / Tunnel → Scan → Validate → Move to Service.</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote">
+<b>ملاحظة:</b> هذا ملف عام وليس مرتبطًا ببورت واحد. استخدمه فقط بعد حصولك على Session أو SSH access داخل بيئة Lab/Scope مصرح.
+</div>
+<div class="toc">
+<span class="ttl">الفهرس</span>
+<ol><li><a href="#s1">Discover Internal Networks</a></li><li><a href="#s2">Meterpreter / Metasploit Routing</a></li><li><a href="#s3">SOCKS + ProxyChains</a></li><li><a href="#s4">SSH Tunneling</a></li><li><a href="#s5">Port Forwarding</a></li><li><a href="#s6">Verification &amp; Cleanup</a></li></ol>
+</div>
+<div class="stage" id="s1">
+<h2>1. Discover Internal Networks</h2>
+<p class="desc">ابدأ من الجهاز المخترق: هل عنده NIC أو Route إلى شبكة ما تقدر توصل لها مباشرة؟ هذه هي نقطة قرار الـPivot.</p>
+
+<div class="danger"><b>قاعدة مهمة:</b> اكتشاف شبكة ثانية ≠ Pivot ناجح. النجاح يحتاج Route/Proxy ثم إثبات وصول فعلي لخدمة داخلية.</div>
+<div class="step"><div class="step-title">Linux — عرض الواجهات والعناوين <span class="where">VICTIM SHELL</span></div><div class="cmd">ip addr</div><div class="result">في اللاب الموثق، ظهور واجهة شبكة ثانية كان الـTrigger لبدء Pivoting.</div><div class="note">وجود NIC ثانية وحده لا يعني أن الـPivot نجح؛ هي فقط تكشف فرصة لشبكة داخلية.</div></div><div class="step"><div class="step-title">Linux — عرض جدول التوجيه <span class="where">VICTIM SHELL</span></div><div class="cmd">ip route</div><div class="note">حدد الـsubnet الداخلي والـgateway من معلومات حقيقية ظهرت على الجهاز.</div></div><div class="step"><div class="step-title">Windows — عرض الواجهات <span class="where">WINDOWS CMD</span></div><div class="cmd">ipconfig /all</div></div><div class="step"><div class="step-title">عرض الجيران المعروفين على Linux <span class="where">VICTIM SHELL</span></div><div class="cmd">ip neigh</div><div class="note">قد يساعدك في تحديد Hosts داخل الشبكة الثانية بدون افتراض أن كل العناوين حية.</div></div><div class="step"><div class="step-title">Meterpreter — تأكيد Session الحالية <span class="where">METERPRETER</span></div><div class="cmd">getuid
+sysinfo</div><div class="note">تأكد أنك داخل الجلسة الصحيحة قبل تعديل Routes.</div></div><div class="step"><div class="step-title">Meterpreter — إضافة Route للشبكة الداخلية <span class="where">METERPRETER</span></div><div class="cmd">run autoroute -s [SUBNET]</div><div class="note">استخدم الـsubnet الحقيقي المكتشف من ip addr/ip route، وليس عنوان Host مفردًا.</div><div class="danger">أمر autoroute وحده لا يثبت نجاح end-to-end؛ لا تعتبر إضافة Route وحدها نجاحًا.</div></div><div class="step"><div class="step-title">اختبار SSH Credential معروف على Pivot Host <span class="where">KALI TERMINAL</span></div><div class="cmd">ssh [USERNAME]@[TARGET]</div><div class="note">إذا نجح الدخول، يمكنك استخدام -L أو -D أو -R حسب المسار المطلوب.</div></div><div class="step"><div class="step-title">اختبار SSH Private Key معروف <span class="where">KALI TERMINAL</span></div><div class="cmd">chmod 0400 [PRIVATE_KEY]
+ssh -i [PRIVATE_KEY] [USERNAME]@[TARGET]</div><div class="note">استخدم مفتاحًا حصلت عليه من نفس اللاب أو مصدر مصرح.</div></div><div class="step"><div class="step-title">مراجعة الشبكة على Pivot Host قبل الانتقال <span class="where">VICTIM SHELL</span></div><div class="cmd">ip addr
+ip route</div><div class="tip">بعد إثبات الوصول، انتقل إلى Cheatsheet الخدمة الداخلية المكتشفة. لا تعيد Enumeration عام كامل هنا.</div></div></div>
+<div class="stage" id="s2">
+<h2>2. Meterpreter / Metasploit Routing</h2>
+<p class="desc">بعد معرفة الشبكة الداخلية، افحصها بالطريقة المتوافقة مع نوع الـPivot. لا تفترض أن كل Scan يعمل عبر SOCKS.</p>
+
+<div class="tip">إذا عندك Meterpreter Route فقط بدون SOCKS، استخدم Metasploit scanners. إذا عندك SOCKS/SSH Dynamic Forward، استخدم أدوات TCP التي تتوافق مع ProxyChains.</div>
+<div class="step"><div class="step-title">Windows — عرض جدول التوجيه <span class="where">WINDOWS CMD</span></div><div class="cmd">route print</div><div class="tip">إذا ظهر Subnet إضافي أو Route غير موجود عند جهازك المهاجم، سجله كمرشح للـPivot.</div></div><div class="step"><div class="step-title">Metasploit — عرض Routes قبل الفحص <span class="where">MSFCONSOLE</span></div><div class="cmd">route print</div><div class="note">تأكد أن الـsubnet الداخلي موجود في Routing Table الخاصة بـMetasploit قبل تشغيل scanners.</div></div><div class="step"><div class="step-title">Metasploit — فحص TCP عبر Route داخلي <span class="where">MSFCONSOLE</span></div><div class="cmd">use auxiliary/scanner/portscan/tcp
+set RHOSTS [SUBNET]
+set PORTS [PORT]
+run</div><div class="note">هذا المسار مناسب بعد إضافة Route داخل Metasploit؛ استخدم البورتات التي تهم هدف اللاب.</div></div><div class="step"><div class="step-title">Metasploit — التحقق من Routes <span class="where">MSFCONSOLE</span></div><div class="cmd">route print</div><div class="note">لا تنتقل للفحص الداخلي قبل رؤية Route المناسبة.</div></div><div class="step"><div class="step-title">Meterpreter — إضافة Route <span class="where">METERPRETER</span></div><div class="cmd">run autoroute -s [SUBNET]</div><div class="note">نفّذها فقط بعد التأكد من الشبكة الداخلية.</div></div><div class="step"><div class="step-title">تأكيد Route في Metasploit <span class="where">MSFCONSOLE</span></div><div class="cmd">route print</div><div class="note">احتفظ بالـsubnet والـsession المرتبط بالـRoute.</div></div></div>
+<div class="stage" id="s3">
+<h2>3. SOCKS + ProxyChains</h2>
+<p class="desc">حدد نوع الـPivot المتاح: Meterpreter Route، SOCKS Proxy، أو SSH Tunnel. بعدها تحقق من المسار قبل التوسع.</p>
+
+<div class="tip"><b>Decision Flow:</b> Second NIC/Subnet → Route أو SOCKS/Tunnel → تحقق من Route → اختبر Host/Port داخلي → استخدم Cheatsheet الخدمة المكتشفة.</div>
+<div class="step"><div class="step-title">ProxyChains — فحص TCP Connect محدود عبر SOCKS <span class="where">KALI TERMINAL</span></div><div class="cmd">proxychains nmap -sT -Pn -n -p[PORT] [TARGET2]</div><div class="note">استخدم TCP Connect فقط. SYN/UDP/OS detection لا تعمل بشكل موثوق عبر SOCKS/ProxyChains.</div></div><div class="step"><div class="step-title">فحص خدمة داخلية واحدة بعد معرفة بورتها <span class="where">KALI TERMINAL</span></div><div class="cmd">proxychains nmap -sT -Pn -n -sV -p[PORT] [TARGET2]</div><div class="danger">Version detection عبر ProxyChains قد يكون أبطأ أو غير كامل. لا تعتبر timeout دليلًا أن الخدمة مغلقة.</div></div><div class="step"><div class="step-title">اختبار وصول TCP مباشر عبر ProxyChains <span class="where">KALI TERMINAL</span></div><div class="cmd">proxychains nc -nv [TARGET2] [PORT]</div><div class="note">مفيد كاختبار بسيط قبل تشغيل أداة خدمة متخصصة.</div></div><div class="step"><div class="step-title">البحث عن SOCKS Proxy Module في Metasploit <span class="where">MSFCONSOLE</span></div><div class="cmd">search socks_proxy
+info [SOCKS_MODULE]
+show options</div><div class="note">اسم وخيارات الـModule قد تختلف حسب إصدار Metasploit؛ اعتمد على search/info.</div></div><div class="step"><div class="step-title">اختبار خدمة داخلية عبر ProxyChains <span class="where">KALI TERMINAL</span></div><div class="cmd">proxychains nc -nv [TARGET2] [PORT]</div><div class="danger">لا تستخدم Password Spraying عبر Pivot لمجرد وجود خدمة داخلية؛ انتقل لملف الخدمة واختبر فقط ما يسمح به الـScope.</div></div><div class="step"><div class="step-title">Metasploit — تشغيل SOCKS Proxy بعد اختيار Module مناسب <span class="where">MSFCONSOLE</span></div><div class="cmd">use [SOCKS_MODULE]
+show options
+set SRVHOST 127.0.0.1
+set SRVPORT [SOCKS_PORT]
+run</div><div class="note">راجع show options في نسختك؛ SOCKS version والإعدادات تختلف حسب الـModule.</div><div class="danger">شغّل Proxy محليًا فقط ضمن جهاز الاختبار ولا تفتح Listener أوسع من اللازم.</div></div></div>
+<div class="stage" id="s4">
+<h2>4. SSH Tunneling</h2>
+<p class="desc">الـPivot نفسه لا يحتاج Brute Force. اختبر فقط Credentials معروفة عندما يكون SSH أو خدمة وسيطة هي طريقك للشبكة الداخلية.</p>
+
+<div class="tip">Credential reuse هنا هدفه إنشاء قناة وصول شرعية داخل اللاب، وليس جمع Credentials جديدة. Credential Access له ملف مستقل.</div>
+<div class="step"><div class="step-title">SSH — Dynamic SOCKS Proxy <span class="where">KALI TERMINAL</span></div><div class="cmd">ssh -D [SOCKS_PORT] [USERNAME]@[TARGET]</div><div class="note">استخدمه مع ProxyChains للوصول إلى عدة خدمات TCP داخل الشبكة.</div></div><div class="step"><div class="step-title">SSH — Remote Port Forward <span class="where">KALI TERMINAL</span></div><div class="cmd">ssh -R [REMOTE_PORT]:[TARGET2]:[PORT] [USERNAME]@[TARGET]</div><div class="note">يفتح منفذًا على الجهة البعيدة ويوجهه للوجهة المحددة. استخدمه فقط عند حاجة واضحة داخل اللاب.</div></div></div>
+<div class="stage" id="s5">
+<h2>5. Port Forwarding</h2>
+<p class="desc">في Pivoting، “الاستغلال” العملي هو تحويل جلسة موجودة إلى مسار شبكة يعمل ثم استخدامه للوصول لخدمة داخلية موثقة.</p>
+
+<div class="danger"><b>لا تخلط المفاهيم:</b> Route فقط = Pivot configured. إثبات الوصول بخدمة داخلية = Pivot working. استغلال الخدمة الداخلية نفسها ينتقل إلى Cheatsheet تلك الخدمة.</div>
+<div class="step"><div class="step-title">SSH — Local Port Forward <span class="where">KALI TERMINAL</span></div><div class="cmd">ssh -L [LOCAL_PORT]:[TARGET2]:[PORT] [USERNAME]@[TARGET]</div><div class="note">بعد الاتصال، استخدم 127.0.0.1:[LOCAL_PORT] للوصول للخدمة الداخلية المحددة.</div></div><div class="step"><div class="step-title">SSH Local Forward — الوصول لخدمة داخلية عبر localhost <span class="where">KALI TERMINAL</span></div><div class="cmd">ssh -L [LOCAL_PORT]:[TARGET2]:[PORT] [USERNAME]@[TARGET]</div><div class="tip">بعدها افتح العميل المناسب على 127.0.0.1:[LOCAL_PORT] بدل الوصول المباشر لـ[TARGET2].</div></div><div class="step"><div class="step-title">Meterpreter — Local Port Forward <span class="where">METERPRETER</span></div><div class="cmd">portfwd add -l [LOCAL_PORT] -p [PORT] -r [TARGET2]</div><div class="note">ينشئ Local Forward عبر جلسة Meterpreter إلى Host داخلي محدد.</div></div></div>
+<div class="stage" id="s6">
+<h2>6. Verification &amp; Cleanup</h2>
+<p class="desc">أثبت أن المسار يعمل، سجّل الشبكة والخدمة التي وصلت لها، ثم انتقل لملف الخدمة الداخلية بدل تكرار الهجوم هنا.</p>
+
+<div class="danger">لا تعتبر رؤية NIC ثانية أو كتابة autoroute نجاحًا نهائيًا. النجاح الحقيقي يحتاج إثبات اتصال فعلي بخدمة داخلية.</div>
+<div class="step"><div class="step-title">اختبار خدمة داخلية عبر Local Forward <span class="where">KALI TERMINAL</span></div><div class="cmd">nc -nv 127.0.0.1 [LOCAL_PORT]</div><div class="note">إذا كان Local Forward قائمًا، هذا يختبر وصول TCP إلى الخدمة الداخلية بدون كشفها مباشرة لجهازك.</div></div><div class="step"><div class="step-title">ProxyChains — اختبار خدمة HTTP داخلية <span class="where">KALI TERMINAL</span></div><div class="cmd">proxychains curl -I http://[TARGET2]:[PORT]/</div><div class="note">إذا استجاب HTTP عبر الـProxy فهذا Proof عملي على وصول end-to-end لهذه الخدمة.</div></div><div class="step"><div class="step-title">Meterpreter — عرض Port Forwards <span class="where">METERPRETER</span></div><div class="cmd">portfwd list</div></div><div class="step"><div class="step-title">تأكيد Forward في Meterpreter <span class="where">METERPRETER</span></div><div class="cmd">portfwd list</div></div><div class="step"><div class="step-title">إثبات وصول HTTP داخلي عبر Proxy <span class="where">KALI TERMINAL</span></div><div class="cmd">proxychains curl -I http://[TARGET2]:[PORT]/</div><div class="result">إذا رجع HTTP response من [TARGET2] عبر الـProxy فهذا يثبت وصولًا فعليًا لهذه الخدمة.</div></div><div class="step"><div class="step-title">إثبات وصول TCP داخلي عبر Local Forward <span class="where">KALI TERMINAL</span></div><div class="cmd">nc -nv 127.0.0.1 [LOCAL_PORT]</div><div class="note">نجاح TCP connection على الـlocal port يعني أن الـforward وصل للوجهة المحددة.</div></div><div class="step"><div class="step-title">إزالة Port Forward عند انتهاء الاختبار <span class="where">METERPRETER</span></div><div class="cmd">portfwd delete -l [LOCAL_PORT] -p [PORT] -r [TARGET2]</div><div class="note">نظف الـforward المؤقت بعد انتهاء الحاجة له داخل اللاب.</div></div></div>
+<footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+    هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+    يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+    مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+  </div>
+</footer>
+</div>
+</body>
+</html>

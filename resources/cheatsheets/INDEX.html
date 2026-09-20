@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><title>Pentest Cheatsheets Index</title><style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style><style>.idx a{color:var(--yellow);text-decoration:none}.idx li{margin:8px 0}</style></head><body><div class="wrap"><div class="hero"><span class="tag">FINAL LIBRARY INDEX</span><h1>Pentest Cheatsheets — INDEX</h1><p>روابط خفيفة إلى ملفات الخدمات والمواضيع العامة.</p><div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div></div><div class="portnote">إذا ظهر لك Port أثناء الفحص، ابحث عنه في قائمة الخدمات. إذا حصلت على Shell/Session، انتقل إلى ملفات Post-Access العامة حسب النظام والهدف.</div><div class="stage idx"><h2>Services by Port</h2><p class="desc">Port(s) | Service | Category | Open</p><div class="step"><div class="step-title" dir="ltr">21/TCP | FTP | Core Service | <a href="FTP_Cheatsheet1.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">22/TCP | SSH | Core Service | <a href="SSH_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">23/TCP | TELNET | Core Service | <a href="TELNET_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">25 / 465 / 587 TCP | SMTP | Core Service | <a href="SMTP_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">53 TCP/UDP | DNS | Core Service | <a href="DNS_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">69/UDP | TFTP | Service | <a href="TFTP_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">80 / 443 / 8000 / 8080 / 8888 TCP | HTTP / HTTPS | Core Service | <a href="HTTP_HTTPS_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">88 TCP/UDP | Kerberos | Service | <a href="Kerberos_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">110 / 995 TCP | POP3 / POP3S | Service | <a href="POP3_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">111 / 2049 TCP/UDP | RPC / NFS | Core Service | <a href="NFS_RPC_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">137/138 UDP; 139/445 TCP | SMB / NetBIOS | Core Service | <a href="SMB_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">143 / 993 TCP | IMAP / IMAPS | Service | <a href="IMAP_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">161/UDP | SNMP | Core Service | <a href="SNMP_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">389 TCP/UDP / 636 TCP | LDAP / LDAPS | Service | <a href="LDAP_LDAPS_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">873/TCP | RSYNC | Extra Reference | <a href="RSYNC_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">1099/TCP | Java RMI | Extra Reference | <a href="Java_RMI_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">1433/TCP | MSSQL | Core Service | <a href="MSSQL_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">1521/TCP | Oracle TNS | Extra Reference | <a href="Oracle_TNS_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">2375 / 2376 TCP | Docker API | Extra Reference | <a href="Docker_API_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">3306/TCP | MySQL | Core Service | <a href="MYSQL_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">3389/TCP | RDP | Core Service | <a href="RDP_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">5432/TCP | PostgreSQL | Extra Reference | <a href="PostgreSQL_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">5672 / 15672 TCP | RabbitMQ | Extra Reference | <a href="RabbitMQ_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">5900–5905 TCP | VNC | Extra Reference | <a href="VNC_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">5985 / 5986 TCP | WinRM | Core Service | <a href="WINRM_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">6379/TCP | Redis | Extra Reference | <a href="Redis_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">6667 / 6697 TCP | IRC | Extra Reference | <a href="IRC_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">8009/TCP | AJP | Extra Reference | <a href="AJP_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">8080 / 50000 TCP | Jenkins | Service | <a href="Jenkins_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">9042 / 7000 / 7001 / 7199 / 9160 TCP | Cassandra | Extra Reference | <a href="Cassandra_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">9200 / 9300 TCP | Elasticsearch | Extra Reference | <a href="Elasticsearch_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">11211/TCP | Memcached | Extra Reference | <a href="Memcached_Cheatsheet.html">Open</a></div></div><div class="step"><div class="step-title" dir="ltr">27017/TCP | MongoDB | Extra Reference | <a href="MongoDB_Cheatsheet.html">Open</a></div></div></div><div class="stage idx"><h2>General / Post-Access References</h2><p class="desc">مواضيع عامة بدون Port ثابت.</p><ol><li><a href="Recon_OSINT_Cheatsheet.html">Recon / OSINT</a></li><li><a href="Vulnerability_Scanning_Cheatsheet.html">Vulnerability Scanning</a></li><li><a href="Metasploit_Cheatsheet.html">Metasploit</a></li><li><a href="Linux_Post_Exploitation_Cheatsheet.html">Linux Post-Exploitation</a></li><li><a href="Windows_Post_Exploitation_Cheatsheet.html">Windows Post-Exploitation</a></li><li><a href="Privilege_Escalation_Cheatsheet.html">Privilege Escalation</a></li><li><a href="Credential_Access_Cheatsheet.html">Credential Access</a></li><li><a href="Pivoting_Cheatsheet.html">Pivoting</a></li><li><a href="File_Transfer_Cheatsheet.html">File Transfer</a></li><li><a href="SQL_Injection_Cheatsheet.html">SQL Injection</a></li><li><a href="XSS_Cheatsheet.html">XSS</a></li><li><a href="CMS_WordPress_Cheatsheet.html">CMS / WordPress</a></li></ol></div><footer><div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div><div class="disclaimer">هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط. يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا. مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.</div></footer></div></body></html>

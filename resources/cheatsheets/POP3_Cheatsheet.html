@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>POP3 Cheatsheet</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">PORT 110 / 995 — POP3 / POP3S</span>
+<h1>POP3 — من اكتشاف الخدمة إلى قراءة البريد</h1>
+<p>مرجع سريع أثناء اللاب — Banner، Capabilities، Authentication، Mail Retrieval، واستخراج المعلومات المفيدة</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote">
+<b>ملاحظة عن البورت:</b> POP3 يعمل عادة على <b>110/TCP</b>، بينما POP3S المشفر يعمل على <b>995/TCP</b>. قد يستخدم الخادم STARTTLS على 110 بدل الاعتماد على 995.
+</div>
+<div class="toc">
+<span class="ttl">الفهرس</span>
+<ol>
+<li><a href="#s1">Reconnaissance</a></li>
+<li><a href="#s2">Port Scanning</a></li>
+<li><a href="#s3">Enumeration</a></li>
+<li><a href="#s4">Credential Testing</a></li>
+<li><a href="#s5">Mailbox Access</a></li>
+<li><a href="#s6">Findings / Handoff</a></li>
+</ol>
+</div>
+<div class="stage" id="s1">
+<h2>1. Reconnaissance</h2>
+<p class="desc">حدد هل الهدف يشغل خدمة بريد POP3 عادية أو مشفرة قبل بدء الاختبار.</p>
+<div class="step">
+<div class="step-title">معرفة الشبكة والهدف <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ip a
+ip route</div>
+</div>
+<div class="step">
+<div class="step-title">فحص خدمات البريد الشائعة <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV -p25,110,143,465,587,993,995 [TARGET]</div>
+<div class="note">وجود SMTP مع POP3/IMAP يساعدك تربط workflow البريد كامل.</div>
+</div>
+<div class="tip">POP3 يستخدم غالبًا <b>110/TCP</b>، وPOP3S المشفر يستخدم <b>995/TCP</b>. بعد تسجيل الدخول يكون الهدف عادة قراءة الرسائل وليس الحصول على shell مباشرة.</div>
+</div><div class="stage" id="s2">
+<h2>2. Port Scanning</h2>
+<p class="desc">أكد الخدمة والإصدار وما إذا كانت TLS مطلوبة.</p>
+<div class="step">
+<div class="step-title">فحص POP3 <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV -p110,995 [TARGET]</div>
+<div class="result">✓ ظهور pop3 أو pop3s يؤكد أن الخدمة متاحة.</div>
+</div>
+<div class="step">
+<div class="step-title">فحص سكربتات POP3 <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p110,995 --script=pop3-capabilities,pop3-ntlm-info [TARGET]</div>
+<div class="note">قد يكشف capabilities أو معلومات NTLM في بعض البيئات.</div>
+</div>
+<div class="step">
+<div class="step-title">فحص SSL على 995 <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV --script=ssl-cert,ssl-enum-ciphers -p995 [TARGET]</div>
+<div class="note">استخدمه إذا كانت الخدمة POP3S.</div>
+</div>
+</div><div class="stage" id="s3">
+<h2>3. Enumeration</h2>
+<p class="desc">اجمع banner وcapabilities، ثم استخدم أي usernames حصلت عليها من SMTP أو SMB أو LDAP أو مصادر أخرى.</p>
+<div class="step">
+<div class="step-title">قراءة Banner يدويًا <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nc -nv [TARGET] 110</div>
+<div class="note">ابحث عن اسم المنتج أو إصدار الخدمة.</div>
+<div class="result">✓ استجابة تبدأ عادة بـ +OK تعني أن خادم POP3 يرد.</div>
+</div>
+<div class="step">
+<div class="step-title">عرض Capabilities <span class="where">POP3 CLIENT</span></div>
+<div class="cmd">CAPA</div>
+<div class="note">إذا كانت الخدمة تسمح بذلك، قد ترى USER أو SASL أو STLS أو UIDL وغيرها.</div>
+</div>
+<div class="step">
+<div class="step-title">POP3S عبر OpenSSL <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">openssl s_client -connect [TARGET]:995 -crlf</div>
+<div class="note">بعد الاتصال يمكنك كتابة أوامر POP3 يدويًا داخل الجلسة.</div>
+</div>
+<div class="step">
+<div class="step-title">STARTTLS على 110 عند دعمه <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">openssl s_client -connect [TARGET]:110 -starttls pop3 -crlf</div>
+<div class="note">يفيد إذا أعلن الخادم STLS.</div>
+</div>
+<div class="tip">POP3 ليس دائمًا مناسبًا لـUser Enumeration مستقل. الأفضل غالبًا استخدام usernames اكتشفتها من SMTP/SMB/LDAP ثم اختبارها هنا.</div>
+</div><div class="stage" id="s4">
+<h2>4. Credential Testing</h2>
+<p class="desc">اختبر بيانات الاعتماد المعروفة أولًا، ثم استخدم password spraying أو أدوات مناسبة داخل بيئة مصرح بها.</p>
+<div class="step">
+<div class="step-title">تسجيل دخول يدوي <span class="where">POP3 CLIENT</span></div>
+<div class="cmd">USER [USERNAME]
+PASS [PASSWORD]</div>
+<div class="note">تجربة مفيدة للتأكد من credential واحد.</div>
+<div class="result">✓ +OK Logged in أو استجابة مشابهة = المصادقة نجحت.</div>
+</div>
+<div class="step">
+<div class="step-title">Hydra على POP3 <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">hydra -L [USERLIST] -P [WORDLIST] pop3://[TARGET]</div>
+<div class="note">استخدمه فقط داخل Lab وبوعي بسياسة lockout.</div>
+</div>
+<div class="step">
+<div class="step-title">Hydra على POP3S <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">hydra -L [USERLIST] -P [WORDLIST] pop3s://[TARGET]</div>
+</div>
+<div class="step">
+<div class="step-title">Metasploit POP3 Login <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/pop3/pop3_login
+set RHOSTS [TARGET]
+set USER_FILE [USERLIST]
+set PASS_FILE [WORDLIST]
+run</div>
+<div class="note">مسار بديل لاختبار تسجيل الدخول.</div>
+</div>
+<div class="danger"><b>تحذير:</b> اختبارات كلمات المرور قد تسبب Account Lockout. ابدأ بالـcredentials المعروفة أو Password Spraying منخفض المعدل.</div>
+</div><div class="stage" id="s5">
+<h2>5. Mailbox Access</h2>
+<p class="desc">في POP3 الاستغلال العملي غالبًا هو الوصول لصندوق البريد واستخراج معلومات مفيدة، وليس CVE عشوائي.</p>
+<div class="step">
+<div class="step-title">عرض عدد الرسائل <span class="where">POP3 CLIENT</span></div>
+<div class="cmd">STAT</div>
+<div class="note">يعرض عدد الرسائل والحجم الإجمالي تقريبًا.</div>
+</div>
+<div class="step">
+<div class="step-title">عرض قائمة الرسائل <span class="where">POP3 CLIENT</span></div>
+<div class="cmd">LIST</div>
+<div class="note">يعرض أرقام الرسائل وأحجامها.</div>
+</div>
+<div class="step">
+<div class="step-title">قراءة رسالة محددة <span class="where">POP3 CLIENT</span></div>
+<div class="cmd">RETR [MESSAGE_NUMBER]</div>
+<div class="note">ابحث عن credentials، روابط reset، hostnames، internal IPs أو معلومات تشغيلية مهمة.</div>
+</div>
+<div class="step">
+<div class="step-title">عرض Unique IDs <span class="where">POP3 CLIENT</span></div>
+<div class="cmd">UIDL</div>
+<div class="note">يساعد في تمييز الرسائل عند الحاجة.</div>
+</div>
+<div class="step">
+<div class="step-title">إنهاء الجلسة <span class="where">POP3 CLIENT</span></div>
+<div class="cmd">QUIT</div>
+</div>
+<div class="tip">إذا وجدت Credentials في البريد، اختبر إعادة استخدامها على SSH/SMB/WinRM/RDP/Web فقط إذا كانت هذه الخدمات ضمن نطاق اللاب المصرح.</div>
+</div><div class="stage" id="s6">
+<h2>6. Findings / Handoff</h2>
+<p class="desc">حوّل محتوى البريد إلى leads واضحة للخدمات التالية بدل التوسع في Post-Exploitation عام.</p>
+<div class="step">
+<div class="step-title">البحث في رسائل محفوظة محليًا <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">grep -RniE 'pass|password|user|token|key|host|vpn|ssh|rdp|http' [MAIL_DIR_OR_FILE]</div>
+<div class="note">ركز على المعلومات التي تقودك لخطوة منطقية تالية.</div>
+</div>
+<div class="step">
+<div class="step-title">فحص بورت مكتشف من البريد <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV -p[DISCOVERED_PORT] [TARGET_OR_HOST]</div>
+</div>
+<div class="step">
+<div class="step-title">اختبار Credential مكتشف على خدمة أخرى <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV -p22,445,3389,5985,5986 [TARGET]</div>
+<div class="note">حدد أولًا الخدمات المفتوحة، ثم استخدم الـCheatsheet المناسب بدل إعادة كل workflow هنا.</div>
+</div>
+<div class="tip">POP3 غالبًا مصدر معلومات. إذا حصلت على Credential أو Host داخلي أو URL، انتقل إلى Sheet الخدمة المقابلة.</div>
+</div>
+<footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+    هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+    يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+    مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+  </div>
+</footer>
+</div>
+</body>
+</html>

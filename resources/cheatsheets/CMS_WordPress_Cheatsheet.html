@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/><title>CMS / WordPress — Quick Reference</title><style>
+:root{
+  --bg:#0b0b0b; --panel:#141414; --panel-2:#1a1a1a; --border:#2b2b2b;
+  --gold:#d4af37; --gold-dim:#8a712a; --yellow:#e8c547;
+  --text:#e9e6da; --text-dim:#a19c8c; --mono:#f2e6b8;
+  --green:#7fae4a; --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:"Tahoma","Segoe UI",sans-serif;margin:0;padding:0 0 4rem;line-height:1.7;}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:1.2rem;position:relative;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;white-space:pre-wrap;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style></head><body><div class="wrap"><div class="hero"><span class="tag">WEB APPLICATION — CMS / WORDPRESS</span><h1>CMS / WordPress — Quick Reference</h1><p>ملف محدود: مسار WordPress عملي، مع General Reference واضح للتعرّف والـenumeration.</p><div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div></div><div class="toc"><span class="ttl">الفهرس</span><ol><li><a href="#s1">Detect CMS</a></li><li><a href="#s2">WordPress Enumeration</a></li><li><a href="#s3">Login</a></li><li><a href="#s4">Version-backed Findings</a></li><li><a href="#s5">WordPress Database → Login Path</a></li></ol></div><div class="stage" id="s1"><h2>1. Detect CMS</h2><p class="desc">ابدأ بإثبات أن الموقع WordPress أو CMS محدد.</p><div class="step"><div class="step-title">Fingerprint <span class="where">KALI TERMINAL</span></div><div class="cmd">whatweb [URL]</div><div class="note">GENERAL REFERENCE: ابحث عن WordPress أو تقنيات CMS ظاهرة.</div></div><div class="step"><div class="step-title">Common WordPress paths <span class="where">KALI TERMINAL</span></div><div class="cmd">curl -I [WP_BASE]/wp-login.php
+curl -I [WP_BASE]/wp-admin/
+curl -I [WP_BASE]/wp-content/</div><div class="note">GENERAL REFERENCE — [WP_BASE] = مسار تثبيت WordPress؛ قد يكون / أو subdirectory. وجود المسار وحده قرينة، وليس إثبات نسخة.</div></div></div><div class="stage" id="s2"><h2>2. WordPress Enumeration</h2><p class="desc">استخدم WPScan فقط على الموقع المصرح وبعد إثبات WordPress.</p><div class="step"><div class="step-title">Basic scan <span class="where">KALI TERMINAL</span></div><div class="cmd">wpscan --url [URL]</div><div class="note">GENERAL REFERENCE.</div><div class="result">GENERAL REFERENCE — Version enumeration: ابحث عن WordPress version إن أمكن تحديده.</div></div><div class="step"><div class="step-title">Users / plugins / themes <span class="where">KALI TERMINAL</span></div><div class="cmd">wpscan --url [URL] --enumerate u,p,t</div><div class="note">GENERAL REFERENCE: اربط أي finding بالإصدار الفعلي قبل الاستغلال.</div><div class="result">GENERAL REFERENCE — User enumeration: usernames discovered. Plugin/theme enumeration: names + versions عندما تكون ظاهرة.</div></div></div><div class="stage" id="s3"><h2>3. Login</h2><p class="desc">بعد الحصول على بيانات دخول صالحة، جرّب تسجيل الدخول إلى wp-admin.</p><div class="step"><div class="step-title">Admin portal <span class="where">BROWSER</span></div><div class="cmd">[WP_BASE]/wp-admin/</div><div class="note">استخدم مسار wp-admin مع [WP_BASE] كـplaceholder لمسار تثبيت WordPress.</div></div><div class="step"><div class="step-title">Credentials <span class="where">BROWSER</span></div><div class="cmd">[USERNAME] / [PASSWORD]</div><div class="note">اختبر فقط بيانات مصرح بها أو خرجت من workflow داخل اللاب.</div></div><div class="step"><div class="step-title">WPScan credential testing <span class="where">KALI TERMINAL</span></div><div class="cmd">wpscan --url [TARGET_URL] -U [USERLIST] -P [WORDLIST]</div><div class="note">اختبر فقط قوائم بيانات اعتماد مصرح بها داخل اللاب.</div><div class="result">GENERAL REFERENCE — النجاح = بيانات دخول صالحة يمكن التحقق منها عبر login.</div></div></div><div class="stage" id="s4"><h2>4. Version-backed Findings</h2><p class="desc">لا تحوّل الملف إلى exploit list.</p><div class="step"><div class="step-title">Plugin/theme check <span class="where">KALI / BROWSER</span></div><div class="cmd">[PLUGIN_OR_THEME] [VERSION]</div><div class="note">لا تستخدم exploit إلا عند تطابق المكوّن والإصدار والشروط المسبقة.</div></div><div class="step"><div class="step-title">Search local exploit reference <span class="where">KALI TERMINAL</span></div><div class="cmd">searchsploit wordpress [COMPONENT] [VERSION]</div><div class="note">GENERAL REFERENCE: راجع تفاصيل exploit قبل التنفيذ.</div></div></div><div class="stage" id="s5"><h2>5. WordPress Database → Login Path</h2><p class="desc">قد يظهر مسار WordPress بعد الوصول إلى MySQL وجدول المستخدمين الخاص بالتثبيت.</p><div class="step"><div class="step-title">Database selection <span class="where">MYSQL SESSION</span></div><div class="cmd">use [WP_DATABASE];
+show tables;
+select * from [WP_PREFIX]_users;</div><div class="note">استبدل [WP_DATABASE] و[WP_PREFIX] بالقيم الفعلية داخل اللاب، ولا تحفظ hashes/passwords فعلية داخل الملف.</div></div><div class="step"><div class="step-title">Handoff to CMS login <span class="where">BROWSER</span></div><div class="cmd">[WP_BASE]/wp-admin/</div><div class="note">بعد الحصول على Credentials صالحة، انتقل للـlogin بدل تكرار مسار قاعدة البيانات هنا.</div></div></div><footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+    هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+    يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+    مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+  </div>
+</footer></div></body></html>

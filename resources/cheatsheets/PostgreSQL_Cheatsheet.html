@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>PostgreSQL Cheatsheet</title><style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style></head>
+<body><div class="wrap">
+<div class="hero">
+<span class="tag">PORT 5432 / TCP — POSTGRESQL</span>
+<h1>PostgreSQL — من الفحص إلى ما بعد الاستغلال</h1>
+<p>مرجع عملي للـLab: اكتشاف PostgreSQL، Enumeration، Credential Testing، تقييم الصلاحيات والبيانات ثم الانتقال للخطوة التالية.</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote"><b>ملاحظة عن البورت:</b> PostgreSQL يستخدم افتراضيًا 5432/TCP، لكن يمكن تشغيله على بورت مختلف؛ لذلك لا تستبعده قبل الفحص الشامل.</div>
+<div class="toc"><span class="ttl">الفهرس</span><ol>
+<li><a href="#s1">Reconnaissance</a></li><li><a href="#s2">Port Scanning</a></li><li><a href="#s3">Enumeration</a></li>
+<li><a href="#s4">Credential Testing</a></li><li><a href="#s5">Database Access / Permission Assessment</a></li><li><a href="#s6">Evidence / Handoff</a></li>
+</ol></div>
+<div class="stage" id="s1"><h2>1. Reconnaissance</h2>
+<p class="desc">ثبّت الهدف ومسار الشبكة قبل فحص PostgreSQL.</p>
+<div class="step">
+<div class="step-title">معرفة عنوانك ومسار الشبكة <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ip a
+ip route</div>
+</div>
+<div class="step">
+<div class="step-title">اختبار الوصول للهدف <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ping -c 4 [TARGET]</div>
+<div class="note">إذا ICMP محجوب، استخدم -Pn في Nmap وكمل الفحص.</div>
+</div>
+<div class="step">
+<div class="step-title">اكتشاف الأجهزة عند الحاجة <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -sn [SUBNET]</div>
+</div>
+</div><div class="stage" id="s2"><h2>2. Port Scanning</h2>
+<p class="desc">PostgreSQL يستخدم افتراضيًا 5432/TCP، لكن ممكن يتغير.</p>
+<div class="step">
+<div class="step-title">فحص البورت الافتراضي <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p5432 -sV [TARGET]</div>
+</div>
+<div class="step">
+<div class="step-title">Default Scripts + Version <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p5432 -sC -sV [TARGET]</div>
+</div>
+<div class="step">
+<div class="step-title">فحص TCP شامل <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p- --min-rate 1000 [TARGET]</div>
+<div class="danger">استخدم معدل الفحص المناسب للـLab أو نطاق الاختبار المصرح.</div>
+</div>
+<div class="step">
+<div class="step-title">إعادة فحص البورت المكتشف <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p[PORT] -sC -sV [TARGET]</div>
+</div>
+</div><div class="stage" id="s3"><h2>3. Enumeration</h2>
+<p class="desc">حدد الإصدار، طريقة Authentication، وقواعد البيانات والحسابات التي يسمح لك الخادم برؤيتها.</p>
+<div class="step">
+<div class="step-title">Nmap PostgreSQL Info <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p[PORT] --script pgsql-brute [TARGET]</div>
+<div class="note">هذا الـNSE مخصص لاختبار تسجيل الدخول؛ استخدمه فقط إذا كانت محاولات كلمات المرور مصرح بها.</div>
+</div>
+<div class="step">
+<div class="step-title">اختبار اتصال psql بحساب معروف <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">psql -h [TARGET] -p [PORT] -U [USERNAME] -d [DATABASE]</div>
+<div class="note">سيطلب Password إذا كانت طريقة المصادقة تتطلبه. قاعدة postgres شائعة كقاعدة إدارية لكن لا تفترض وجودها دائمًا.</div>
+</div>
+<div class="step">
+<div class="step-title">عرض إصدار PostgreSQL بعد الدخول <span class="where">PSQL SESSION</span></div>
+<div class="cmd">SELECT version();</div>
+</div>
+<div class="step">
+<div class="step-title">معرفة المستخدم الحالي وقاعدة البيانات <span class="where">PSQL SESSION</span></div>
+<div class="cmd">SELECT current_user, current_database();</div>
+</div>
+<div class="step">
+<div class="step-title">عرض قواعد البيانات <span class="where">PSQL SESSION</span></div>
+<div class="cmd">\l</div>
+</div>
+<div class="step">
+<div class="step-title">عرض الـSchemas <span class="where">PSQL SESSION</span></div>
+<div class="cmd">\dn</div>
+</div>
+<div class="step">
+<div class="step-title">عرض الجداول <span class="where">PSQL SESSION</span></div>
+<div class="cmd">\dt *.*</div>
+</div>
+<div class="step">
+<div class="step-title">عرض الأدوار والحسابات <span class="where">PSQL SESSION</span></div>
+<div class="cmd">\du</div>
+<div class="note">راجع Superuser وCreate role وCreate DB وغيرها من الخصائص.</div>
+</div>
+<div class="step">
+<div class="step-title">عرض معلومات الاتصال <span class="where">PSQL SESSION</span></div>
+<div class="cmd">\conninfo</div>
+</div>
+</div><div class="stage" id="s4"><h2>4. Credential Testing</h2>
+<p class="desc">اختبر Credentials المصرح بها، ثم استخدم Password Testing فقط إذا كان ضمن نطاق اللاب.</p>
+<div class="step">
+<div class="step-title">اختبار Credential مباشرة <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">PGPASSWORD='[PASSWORD]' psql -h [TARGET] -p [PORT] -U [USERNAME] -d [DATABASE] -c 'SELECT current_user;'</div>
+<div class="result">إذا نُفذ الاستعلام ورجع المستخدم الحالي فالمصادقة نجحت.</div>
+</div>
+<div class="step">
+<div class="step-title">Hydra Password Testing <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">hydra -L [USERLIST] -P [WORDLIST] -s [PORT] [TARGET] postgres</div>
+<div class="danger">Password attacks قد تسبب Lockout أو ضوضاء حسب البيئة. نفذها فقط داخل Lab أو بتصريح صريح.</div>
+</div>
+<div class="step">
+<div class="step-title">Metasploit PostgreSQL Login Scanner <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search postgres_login
+search type:auxiliary postgres</div>
+<div class="note">اختر Login Scanner الموجود فعليًا في إصدار Metasploit عندك.</div>
+</div>
+<div class="step">
+<div class="step-title">ضبط Scanner بعد اختيار الـModule <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use [POSTGRES_LOGIN_MODULE]
+show options
+set RHOSTS [TARGET]
+set RPORT [PORT]
+set USER_FILE [USERLIST]
+set PASS_FILE [WORDLIST]
+run</div>
+<div class="danger">راجع show options لأن أسماء الخيارات قد تختلف بين Modules/الإصدارات.</div>
+</div>
+</div><div class="stage" id="s5"><h2>5. Database Access / Permission Assessment</h2>
+<p class="desc">بعد دخول ناجح، قيّم صلاحيات الحساب وإمكانية قراءة البيانات أو الوصول لميزات قوية مرتبطة بالخادم.</p>
+<div class="danger"><b>تحذير:</b> تأكد من الإصدار والصلاحيات قبل أي Exploit. لا تستخدم CVE أو Module لمجرد أن 5432 مفتوح.</div>
+<div class="step">
+<div class="step-title">فحص هل الحساب Superuser <span class="where">PSQL SESSION</span></div>
+<div class="cmd">SELECT current_user, usesuper FROM pg_user WHERE usename = current_user;</div>
+<div class="note">Superuser يغيّر مستوى المخاطر بشكل كبير؛ لا تفترض الصلاحية قبل التحقق.</div>
+</div>
+<div class="step">
+<div class="step-title">عرض صلاحيات Roles <span class="where">PSQL SESSION</span></div>
+<div class="cmd">SELECT rolname, rolsuper, rolcreaterole, rolcreatedb, rolcanlogin FROM pg_roles;</div>
+</div>
+<div class="step">
+<div class="step-title">Enumeration للجداول المهمة <span class="where">PSQL SESSION</span></div>
+<div class="cmd">SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema');</div>
+</div>
+<div class="step">
+<div class="step-title">قراءة بيانات من جدول مصرح <span class="where">PSQL SESSION</span></div>
+<div class="cmd">SELECT * FROM [SCHEMA].[TABLE] LIMIT 20;</div>
+<div class="note">حدد الجدول بعد Enumeration ولا تخمّن بيانات أو نتائج.</div>
+</div>
+<div class="step">
+<div class="step-title">البحث عن PostgreSQL Modules <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search postgres
+search [POSTGRES_VERSION]</div>
+<div class="tip">طابق أي Module مع النسخة والنظام والـpreconditions الفعلية.</div>
+</div>
+<div class="step">
+<div class="step-title">مراجعة Module مطابق <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">info [MATCHED_MODULE]
+show options</div>
+<div class="danger">لا تشغّل exploit إذا لم يوجد تطابق واضح مع الإصدار والإعداد المكتشف.</div>
+</div>
+</div><div class="stage" id="s6"><h2>6. Evidence / Handoff</h2>
+<p class="desc">ثبّت ما اكتشفته من PostgreSQL وحوّله للخطوة التالية بدل تكرار Post-Exploitation العام.</p>
+<div class="step">
+<div class="step-title">حفظ معلومات الإصدار والمستخدم <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">PGPASSWORD='[PASSWORD]' psql -h [TARGET] -p [PORT] -U [USERNAME] -d [DATABASE] -c 'SELECT version(), current_user, current_database();' &gt; postgres_info.txt</div>
+</div>
+<div class="step">
+<div class="step-title">حفظ قائمة قواعد البيانات <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">PGPASSWORD='[PASSWORD]' psql -h [TARGET] -p [PORT] -U [USERNAME] -d [DATABASE] -c '\l' &gt; postgres_databases.txt</div>
+</div>
+<div class="step">
+<div class="step-title">حفظ قائمة Roles <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">PGPASSWORD='[PASSWORD]' psql -h [TARGET] -p [PORT] -U [USERNAME] -d [DATABASE] -c '\du' &gt; postgres_roles.txt</div>
+</div>
+<div class="step">
+<div class="step-title">البحث محليًا في النتائج <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">grep -Eai 'user|role|admin|host|password|secret|token|database' postgres_*.txt</div>
+<div class="note">تحقق من كل معلومة قبل اعتبارها Credential أو Target جديدًا.</div>
+</div>
+<div class="step">
+<div class="step-title">فحص خدمة مرتبطة اكتشفتها <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV -p[DISCOVERED_PORT] [DISCOVERED_HOST]</div>
+<div class="tip">إذا PostgreSQL كشف Host/Credential لخدمة أخرى، انتقل إلى Cheatsheet تلك الخدمة.</div>
+</div>
+</div>
+<footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+    هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+    يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+    مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+  </div>
+</footer>
+</div></body></html>

