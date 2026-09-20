@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html dir="ltr" lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>MongoDB — Pentest Cheat Sheet</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style>
+<style>html[dir="ltr"] body{direction:ltr;text-align:left}html[dir="ltr"] .stage{border-right:1px solid var(--border);border-left:3px solid var(--gold)}html[dir="ltr"] .toc,html[dir="ltr"] .portnote,html[dir="ltr"] .note,html[dir="ltr"] .tip,html[dir="ltr"] .danger,html[dir="ltr"] .result{text-align:left}</style></head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">PORT 27017 / TCP — MONGODB</span>
+<h1>MongoDB — Practical Assessment Reference</h1>
+<p>Quick service reference for authorized labs: discovery, enumeration, validation, access assessment, and documentation for MongoDB.</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote"><b>Service note: </b>Ports, versions, and deployment details can vary by configuration. Confirm the actual service fingerprint instead of relying only on a default port.</div>
+<div class="toc">
+<span class="ttl">CONTENTS</span>
+<ol>
+<li><a href="#s1">Reconnaissance</a></li>
+<li><a href="#s2">Port Scanning</a></li>
+<li><a href="#s3">Enumeration</a></li>
+<li><a href="#s4">Credential Testing</a></li>
+<li><a href="#s5">Database Access / Read-Write Assessment</a></li>
+<li><a href="#s6">Evidence / Handoff</a></li>
+</ol>
+</div>
+<div class="stage" id="s1">
+<h2>1. Reconnaissance</h2>
+<p class="desc">Confirm the target, network path, and basic reachability before deeper testing.</p>
+<div class="step">
+<div class="step-title">Review the local network interfaces <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ip a</div>
+</div>
+<div class="step">
+<div class="step-title">Review reachable routes and networks <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ip route</div>
+</div>
+<div class="step">
+<div class="step-title">Check basic target reachability <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ping -c 4 [TARGET]</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Discover live hosts in the authorized subnet <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -sn [SUBNET]</div>
+</div>
+</div>
+<div class="stage" id="s2">
+<h2>2. Port Scanning</h2>
+<p class="desc">Identify exposed ports, service versions, and relevant protocols before enumeration.</p>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p27017 -sV [TARGET]</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div></div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p27017 -sC -sV [TARGET]</div>
+</div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p- --min-rate 1000 [TARGET]</div>
+<div class="danger">Warning: use this step only in an authorized lab or explicitly permitted assessment. Avoid disruptive changes unless they are part of the approved scope.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p[PORT] -sC -sV [TARGET]</div>
+</div>
+</div>
+<div class="stage" id="s3">
+<h2>3. Enumeration</h2>
+<p class="desc">Collect service metadata and enumerate only the information needed for the authorized lab.</p>
+<h3 class="sub">Nmap NSE</h3>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p[PORT] --script mongodb-info [TARGET]</div>
+</div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -p[PORT] --script mongodb-databases [TARGET]</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<h3 class="sub">mongosh</h3>
+<div class="step">
+<div class="step-title">Run the documented check: mongosh --host [TARGET] --port [PORT] <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">mongosh --host [TARGET] --port [PORT]</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div></div>
+<div class="step">
+<div class="step-title">Review service metadata <span class="where">MONGOSH</span></div>
+<div class="cmd">show dbs</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div></div>
+<div class="step">
+<div class="step-title">Run the documented check: db <span class="where">MONGOSH</span></div>
+<div class="cmd">db</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: use [DATABASE] <span class="where">MONGOSH</span></div>
+<div class="cmd">use [DATABASE]</div>
+</div>
+<div class="step">
+<div class="step-title">Review service metadata <span class="where">MONGOSH</span></div>
+<div class="cmd">show collections</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: db.[COLLECTION].find().limit(10) <span class="where">MONGOSH</span></div>
+<div class="cmd">db.[COLLECTION].find().limit(10)</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: db.stats() <span class="where">MONGOSH</span></div>
+<div class="cmd">db.stats()</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: db.adminCommand({ buildInfo: 1 }) <span class="where">MONGOSH</span></div>
+<div class="cmd">db.adminCommand({ buildInfo: 1 })</div>
+</div>
+<div class="step">
+<div class="step-title">Search for a relevant module or reference <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search mongodb
+search type:auxiliary mongodb</div>
+<div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div>
+</div>
+</div>
+<div class="stage" id="s4">
+<h2>4. Credential Testing</h2>
+<p class="desc">Assess authentication with known or explicitly authorized credentials only.</p>
+<div class="step">
+<div class="step-title">Run the documented check: mongosh "mongodb://[USERNAME]:[PASSWORD]@[TARGET]:[PORT]/?auth <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">mongosh "mongodb://[USERNAME]:[PASSWORD]@[TARGET]:[PORT]/?authSource=admin"</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div></div>
+<div class="step">
+<div class="step-title">Run the documented check: mongosh "mongodb://[USERNAME]:[PASSWORD]@[TARGET]:[PORT]/[DATA <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">mongosh "mongodb://[USERNAME]:[PASSWORD]@[TARGET]:[PORT]/[DATABASE]?authSource=[AUTH_DB]"</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: db.runCommand({ connectionStatus: 1 }) <span class="where">MONGOSH</span></div>
+<div class="cmd">db.runCommand({ connectionStatus: 1 })</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: db.getUsers() <span class="where">MONGOSH</span></div>
+<div class="cmd">db.getUsers()</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Search for a relevant module or reference <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search mongodb login
+info [MONGODB_LOGIN_MODULE]
+use [MONGODB_LOGIN_MODULE]
+show options</div>
+<div class="danger">Warning: use this step only in an authorized lab or explicitly permitted assessment. Avoid disruptive changes unless they are part of the approved scope.</div>
+</div>
+</div>
+<div class="stage" id="s5">
+<h2>5. Database Access / Read-Write Assessment</h2>
+<p class="desc">Validate the level of access that was actually obtained and document the evidence.</p>
+<h3 class="sub">Unauthenticated / Over-Privileged Data Access</h3>
+<div class="step">
+<div class="step-title">Run the documented check: db.[COLLECTION].find().limit(20) <span class="where">MONGOSH</span></div>
+<div class="cmd">db.[COLLECTION].find().limit(20)</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: Object.keys(db.[COLLECTION].findOne() || {}) <span class="where">MONGOSH</span></div>
+<div class="cmd">Object.keys(db.[COLLECTION].findOne() || {})</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: db.[COLLECTION].find({ "[FIELD]": "[VALUE]" }).limit(20) <span class="where">MONGOSH</span></div>
+<div class="cmd">db.[COLLECTION].find({ "[FIELD]": "[VALUE]" }).limit(20)</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: db.[COLLECTION].countDocuments({}) <span class="where">MONGOSH</span></div>
+<div class="cmd">db.[COLLECTION].countDocuments({})</div>
+</div>
+<h3 class="sub">Additional checks</h3>
+<div class="step">
+<div class="step-title">Run the documented check: use ejpt_test <span class="where">MONGOSH</span></div>
+<div class="cmd">use ejpt_test</div>
+<div class="danger">Warning: use this step only in an authorized lab or explicitly permitted assessment. Avoid disruptive changes unless they are part of the approved scope.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: db.proof.insertOne({ proof: "authorized-lab" }) <span class="where">MONGOSH</span></div>
+<div class="cmd">db.proof.insertOne({ proof: "authorized-lab" })</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: db.proof.find() <span class="where">MONGOSH</span></div>
+<div class="cmd">db.proof.find()</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div></div>
+<div class="step">
+<div class="step-title">Run the documented check: db.proof.drop() <span class="where">MONGOSH</span></div>
+<div class="cmd">db.proof.drop()</div>
+<div class="danger">Warning: use this step only in an authorized lab or explicitly permitted assessment. Avoid disruptive changes unless they are part of the approved scope.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: db.dropDatabase() <span class="where">MONGOSH</span></div>
+<div class="cmd">db.dropDatabase()</div>
+<div class="danger">Warning: use this step only in an authorized lab or explicitly permitted assessment. Avoid disruptive changes unless they are part of the approved scope.</div>
+</div>
+<h3 class="sub">Version-Specific Assessment</h3>
+<div class="step">
+<div class="step-title">Search for a relevant module or reference <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">search mongodb
+info [MATCHED_EXPLOIT]</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+</div>
+<div class="stage" id="s6">
+<h2>6. Evidence / Handoff</h2>
+<p class="desc">Record verified findings and preserve the evidence needed for the next stage or report.</p>
+<div class="step">
+<div class="step-title">Run the documented check: mongosh --quiet --host [TARGET] --port [PORT] --eval 'db.admin <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">mongosh --quiet --host [TARGET] --port [PORT] --eval 'db.adminCommand({listDatabases:1}).databases.forEach(d=&gt;print(d.name))' &gt; mongo_databases.txt</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: mongosh --quiet --host [TARGET] --port [PORT] [DATABASE] --eva <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">mongosh --quiet --host [TARGET] --port [PORT] [DATABASE] --eval 'db.getCollectionNames().forEach(print)' &gt; mongo_collections.txt</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' mongo_databases.txt mon <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' mongo_databases.txt mongo_collections.txt | sort -u</div>
+</div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV -p[DISCOVERED_PORTS] [TARGET]</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: whoami <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">whoami</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: id <span class="where">VICTIM SHELL</span></div>
+<div class="cmd">id
+hostname
+uname -a</div>
+<div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div>
+</div>
+</div>
+</div>
+<footer>
+<div class="author">Prepared by Abdullah Nasser Almsan</div>
+<div class="disclaimer">Personal technical reference for learning and authorized penetration-testing labs only. The author is not responsible for misuse or unauthorized activity outside the approved scope.</div>
+</footer>
+</body>
+</html>

